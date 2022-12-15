@@ -275,7 +275,7 @@ $(function() {
                     // console.log('currentIndex',self.currentIndex());
                     // console.log('bedPosition',self.bedPosition());
                     // console.log('motorState',self.motorState());
-                    // console.log('isShieldConnected',self.isShieldConnected());
+                    console.log('isShieldConnected',self.isShieldConnected());
                     // console.log('queueState',self.queueState()); 
               
                     console.log('queues',self.queues())

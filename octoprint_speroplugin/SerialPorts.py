@@ -65,44 +65,13 @@ class SerialPorts(object):
 
 
     def connect(self,p):     
-        print("connectttttttttt")                
-        print(p)
-
-
         self.s = serial.Serial(p)
-        print(self.s)
-        # self.sc.checkConnection(self.s)
-        
         return self.s
         
         
-    def disconnect(sel,s):
-        disconnect=""
-        try:
-                # Read data from the serial port
-                data = s.read()
-        
-
-                # Check if data was received
-                if data:
-                    print(data)
-
-
-
-        except serial.SerialException as e:
-                print(e)
-                if e.args[0] == "device reports readiness to read but returned no data (device disconnected or multiple access on port?)":
-                    disconnect="Lost connection to serial port"
-                    print("Lost connection to serial port")
-                    
-        return disconnect
-            
-
-    # def disconnect(self.p):
-    #     print("disconnect")
-
-
     
+  
+
 
     def sendActions(self,a):
         if a=="backward":

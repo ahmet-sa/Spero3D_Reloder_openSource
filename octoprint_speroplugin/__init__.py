@@ -96,32 +96,31 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         while True:
             
             self.ports= self.serial.serialPorts()
-            if self.portsNumber !=len(self.ports):
-                print("disconnect")
-                self.selectedPortName=None
             
-            # self.serial.connect(self.serialConnection)
-            print(len(self.ports))
+            if self.portsNumber !=len(self.ports):
+                self.selectedPortName=None
+                self.isShieldConnected="disconnect"
+                self.messageToJs({'isShieldConnected':self.isShieldConnected}),
+            
+            
             searchPort=Query()
+            
             if len(self.ports)>0:
                 results = self.db.search(searchPort.serial==self.ports[0]["serial"])
-                print("******************")
-                print(results)
+                self.isShieldConnected="Connect"
+                self.messageToJs({'isShieldConnected':self.isShieldConnected}),
+              
                 if results!=None:
-                    
+                    self.messageToJs({'ports':self.ports})
                     self.serialConnection=self.serial.connect(self.ports[0]["device"])
-                    print(self.serialConnection)
-                
-            # if self.serialConnection!=None:
-            #     self.serial.disconnect(self.serialConnection)
+               
                 
             if self.selectedPortName==None:
                 self.messageToJs({'ports':self.ports})
                 self.portsNumber=self.ports
-                print(len(self.ports))
-            # else:
-            #     print(self.serial.disconnect(self.serialConnection))
-            
+                 
+            self.portsNumber=len(self.serial.serialPorts())
+
 
 
             await asyncio.sleep(1)
@@ -148,6 +147,8 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
             print(self.serialConnection)
         
         self.selectedPortName="baglı"
+        self.isShieldConnected="Connected"
+        self.messageToJs({'ports':self.ports,"isShieldConnected":self.isShieldConnected})
 
 
 
@@ -502,7 +503,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
         data = flask.request.get_json()
 
-
+        print(data["request"])
         self.db.insert(data["request"])
 
         self.selectedPortName=data
