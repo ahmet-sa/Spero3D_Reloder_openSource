@@ -77,6 +77,7 @@ class SerialPorts(object):
         
         
     def disconnect(sel,s):
+        disconnect=""
         try:
                 # Read data from the serial port
                 data = s.read()
@@ -91,17 +92,20 @@ class SerialPorts(object):
         except serial.SerialException as e:
                 print(e)
                 if e.args[0] == "device reports readiness to read but returned no data (device disconnected or multiple access on port?)":
+                    disconnect="Lost connection to serial port"
                     print("Lost connection to serial port")
+                    
+        return disconnect
             
 
     # def disconnect(self.p):
     #     print("disconnect")
 
 
+    
+
     def sendActions(self,a):
-        print(self.s)
         if a=="backward":
-           print("sa")
            self.s.write("[CMD] MotorBackward|123\n".encode())
         if a=="stop":
             self.s.write("[CMD] MotorStop|123\n".encode())
@@ -114,14 +118,7 @@ class SerialPorts(object):
     # def controlInit(self):
     #     self.sc.checkConnection(self.s)
       
-            
-
-         
-    def callOnStateChange(self,prop):
-       print("state change")
-       if self.onStateChange:
-            self.onStateChange(self.ports)
- 
+        
 
 SerialPorts()   
  

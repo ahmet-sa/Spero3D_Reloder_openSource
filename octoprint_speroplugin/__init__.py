@@ -85,7 +85,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         self.savedPort=None
         self.firstPorts=None
         self.serialConnection=None
-        
+        self.portsNumber=len(self.serial.serialPorts())
 
 
 
@@ -94,15 +94,33 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
     async def usb_q(self):
 
         while True:
-        
+            
             self.ports= self.serial.serialPorts()
+            if self.portsNumber !=len(self.ports):
+                print("disconnect")
+                self.selectedPortName=None
+            
+            # self.serial.connect(self.serialConnection)
+            print(len(self.ports))
+            searchPort=Query()
+            if len(self.ports)>0:
+                results = self.db.search(searchPort.serial==self.ports[0]["serial"])
+                print("******************")
+                print(results)
+                if results!=None:
+                    
+                    self.serialConnection=self.serial.connect(self.ports[0]["device"])
+                    print(self.serialConnection)
+                
             # if self.serialConnection!=None:
             #     self.serial.disconnect(self.serialConnection)
                 
             if self.selectedPortName==None:
                 self.messageToJs({'ports':self.ports})
-                
-            
+                self.portsNumber=self.ports
+                print(len(self.ports))
+            # else:
+            #     print(self.serial.disconnect(self.serialConnection))
             
 
 
@@ -125,7 +143,6 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         print("******************")
         print(results)
         if results!=None:
-            print(self.ports[0]["device"])
             
             self.serialConnection=self.serial.connect(self.ports[0]["device"])
             print(self.serialConnection)
@@ -190,6 +207,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
 
     def on_event(self, event, payload):                     #event durumları
+        
 
         self.ports = self.serial.serialPorts()
 
@@ -484,9 +502,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
         data = flask.request.get_json()
 
-        print("**********************")
-        print(data)
-        print(data["request"]["serial"])
+
         self.db.insert(data["request"])
 
         self.selectedPortName=data
@@ -508,7 +524,6 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
     def deviceControl(self):
         data = flask.request.get_json()
 
-        print(data)
         if (data["request"]):
             self.serial.sendActions(data["request"])
 
@@ -683,6 +698,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
     @ octoprint.plugin.BlueprintPlugin.route("/sendStartDatas", methods=["GET"])
     @ restricted_access
     def sendStartDatas(self):
+        
         message ={}
 
         print(self.requiredDatas)
@@ -694,7 +710,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         self.messageToJs({'queues':self.queues})
         self.messageToJs({'ports':self.ports})
         print(self.ports)
-        print("aısphhhhhhhdjakl")
+
 
 
         return message
