@@ -1,0 +1,179 @@
+    <center><h4 class="headText" style="font-size:20px;">Connection</h4></center>
+    <div data-bind="$root.Connection()">
+        <!-- ko if: Connection() == true  -->
+            <div class="mainModal state">
+             <i class="fa fa-microchip">&nbsp<span class="headText connection">Device</span></i><span class="inlineText" data-bind="text: client_address"></span><br>
+             <i class="fa fa-rss">&nbsp<span class="headText connection">Connection</span></i><span class="inlineText" data-bind="text: client_state"></span><br>
+             <i class="fa fa-cogs">&nbsp<span class="headText connection">Motor</span></i><span class="inlineText" data-bind="text: client_motor"></span>
+            </div>
+
+
+        <!-- /ko -->
+            <!-- ko if: Connection() != true  -->
+            <div>Not Connected</div>
+        <!-- /ko -->
+    </div>
+
+
+
+
+   
+    <div class="mainModal controll">
+        <i class="fa fa-compass">&nbsp<span class="headText connection">Position</span></i><span data-bind="text: client_position"></span><br>
+        <i class="fa fa-arrows-alt">&nbsp<span class="headText connection">Remote Controll</span></i>
+        <div id="container-fluid" style="height:100%;">
+            <center><div class="buttonGrid" style="height:60%; width: 60%;">
+                    <button class="btn btn-light" title="The table rail moves backward." data-bind="event: {mousedown: function(){$root.device_controll('backward')},
+                    mouseup:function(){$root.device_controll('stop')}},
+                    enable: $root.client_position() != 'backward' && ($root.queue_state() == 'IDLE' || $root.queue_state() == 'PAUSED')"><i class="fa fa-level-down-alt" style="font-size:14px;"></i></button>
+                    <button class="btn btn-light" data-bind="click: function(){$root.device_controll('eject')}, 
+                        enable: $root.client_motor() == 'idle' && ($root.queue_state() == 'IDLE' || $root.queue_state() == 'PAUSED')" title="Start ejecting.">
+	                    <i class="fa fa-eject" style="font-size:14px;"></i>
+                    </button>
+                    <button class="btn btn-light" data-bind="click: function(){$root.device_controll('cancel')}, 
+                        enable: $root.client_motor() != 'idle' && ($root.queue_state() == 'IDLE' || $root.queue_state() == 'PAUSED')" title="Cancel ejecting (it only takes effect when eject starts)">
+	                    <i class="fa fa-ban" style="font-size:14px;"></i>
+                    </button>
+                    <button class="btn btn-light" title="The table rail moves forward." data-bind="event: {mousedown: function(){$root.device_controll('forward')},
+                    mouseup:function(){$root.device_controll('stop')}},
+                    enable: $root.client_position() != 'forward' && ($root.queue_state() == 'IDLE' || $root.queue_state() == 'PAUSED')"><i class="fa fa-level-up-alt" style="font-size:14px;"></i></button>
+
+            </div></center>
+        </div>
+    </div>
+
+
+
+<p id="p1"></p><br>
+
+<center></center>
+<div class="queue_header" data-bind="style: $root.check_empty('queues') ? {} : {padding:'20px', display: 'grid', 'grid-template-columns': '75% 25%'}">
+    <div><center><h4 class="headText" style="font-size:20px;">Current Queue</h4></center></div>
+    <div class="selectbox" data-bind="visible: !($root.check_empty('queues'))">
+        <center><select id="queues" data-bind="options: $root.queues, optionsText: 'name', value: $root.selectedQueue, 
+        optionsCaption:'Select Queue', enable: $root.queue_state() == 'IDLE'" style="width:100%;">
+            {# <!-- ko foreach: $root.queues -->
+            <option data-bind="value: $data.id, text: $data.name, click: function(){ $root.get_queue($data.id()) }, "></option>
+            <!-- /ko --> #}
+        </select></center>
+    </div>
+</div>
+<div data-bind="visible: $root.queue_state() == 'IDLE', 
+    style: $root.queue_state() == 'IDLE' ? {padding:'15px'} : {}">
+  <div class="savebox">
+        <button class="btn btn-primary" data-bind="click: function() {  $root.create_queue()}" title="Create new queue.">
+	        <i class="fa fa-plus"></i>
+        </button>
+        <input data-bind="textInput: $root.queue_name, enable: !($root.check_removed())"></input>
+        <button class="btn btn-primary" data-bind="click: function() {  $root.save_to_database()}, enable: !($root.check_removed())" title="Save current queue.">
+            <i class="fa fa-save"></i>
+        </button>
+        <button class="btn btn-danger pull-right" data-bind="click: function() {  $root.delete_from_database()}, enable: !($root.check_removed())"
+         title="Delete current queue.">
+            <i class="fa fa-trash"></i>
+        </button>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+<div class="details" data-bind="visible: !($root.check_removed())" style="padding: 15px;">
+    <div>
+        <!-- ko if: $root.queue_name() != null -->
+        <span class="state_text" data-bind="text: 'Queue: '"></span>
+        <span class="state_text" style= "font-weight: bold; padding-right: 20px;" data-bind="text: queue_name()"></span>
+        <!-- /ko -->
+        <span class="state_text" data-bind="text: 'Queue state: '"></span>
+        <span class="state_text" style= "font-weight: bold; padding-right: 20px;" data-bind="text: queue_state()"></span>
+        <!-- ko if: $root.queue_state() == "RUNNING" || $root.check_printing() -->
+        <span class="state_text" data-bind="text: 'Time left: '"></span>
+        <span class="state_text" style= "font-weight: bold; " data-bind="text:$root.toHHMMSS($root.totalEstimatedTime())"></span>
+        <!-- /ko -->
+    </div>
+    <div>
+        <button class="btn btn-success pull-right" data-bind="click: start_queue, enable: !$root.terminating() && !$root.check_empty('current_queue') && $root.check_is_busy(), visible: queue_state() == 'IDLE'" title="Start printing">
+	        <i class="fa fa-play"></i>
+        </button>
+        <button class="btn btn-light pull-right" data-bind="click: function(){$root.pause_resume_queue()}, enable: !$root.terminating() && $root.check_is_busy() ,visible: queue_state() == 'PAUSED' && (queue_state() !== 'IDLE')" title="Resume printing">
+	        <i class="fa fa-play-circle"></i>
+        </button>
+        <button class="btn btn-light pull-right" data-bind="click: function(){$root.pause_resume_queue()}, enable: !$root.terminating() && $root.check_is_busy(), visible: !(queue_state() == 'PAUSED') && !(queue_state() == 'IDLE')" title="Pause printing">
+	        <i class="fa fa-pause"></i>
+        </button>
+        <button class="btn btn-danger pull-right" data-bind="click: function(){$root.cancel_queue()}, enable: !$root.terminating() && $root.check_is_busy(), visible: queue_state() != 'IDLE'" title="Cancel printing">
+	        <i class="fa fa-stop"></i>
+        </button>
+    </div>
+</div>
+
+<!-- ko if: info_message() != null || info_message() != undefined -->
+<center>
+    <div class="info" data-bind="text: info_message, style: {background: $root.info_color()}"></div>
+</center>   
+<!-- /ko -->
+
+<div id="queue_list" data-bind="foreach: currentItems, visible: !($root.check_empty('current_queue'))" style="padding-top: 40px; padding-bottom: 40px; margin: 10px;">
+<div class='queue_container' style="border-bottom: 1px solid #000; " data-bind= 'style: { background: color}'>
+    <div class='queue-row-container'>
+        <div class='queue-inner-row-container'>
+            <span class="headText" data-bind="text: $data.index() + 1"></span>&nbsp;&nbsp;
+            <span class="item_text" data-bind="text: name"></span>&nbsp;
+            <div style="padding-left: 15px; padding-right: 15px;">
+                <!-- ko if: previous_state() != "" && $parent.queue_state() == "IDLE" -->
+                <span class="item_text" data-bind="text: previous_state, style: { color: $parent.queue_state() == 'Finished' ? 'darkseagreen' : 'lightcoral' }"></span>&nbsp;
+                <!-- /ko -->
+                <!-- ko if: $data.state() === "Printing" -->
+                <progress class="item_progress" data-bind="value: progress != '-' ? progress : 0 " max="100"></progress>&nbsp;
+                <span data-bind="text: $root.toHHMMSS($data.timeLeft())"></span>&nbsp;
+                <!-- /ko -->
+            </div>
+        </div>
+        <div>
+            <span class="headText" data-bind="text: state"></span>&nbsp;
+            <!-- ko if: $data.state() == "Await" -->
+                <!-- ko if: $data.index() != 0 && !($parent.prev_check($data.index())) -->
+                <i style='cursor: pointer' class='fa fa-chevron-up' data-bind='click: function() { $root.queue_item_up($data.index())}'></i>&nbsp;
+                <!-- /ko -->
+                <!-- ko if: $data.index() != $parent.currentItems().at(-1)().index() -->
+                <i style='cursor: pointer' class='fa fa-chevron-down' data-bind='click: function() { $root.queue_item_down($data.index())}'></i>&nbsp;
+                <!-- /ko -->
+            <!-- /ko -->
+            <!-- ko if: ($data.state() == "Canceled" || $data.state() == "Failed") && $parent.queue_state() == "PAUSED" && !($parent.check_printing()) && $root.terminating() != true -->
+            <button data-bind="enable: $root.check_is_busy(), click: function() { $root.queue_item_restart($data.index())}"><i class="fa fa-refresh"></i></button>
+            <!-- /ko -->
+            <!-- ko if: $data.state() == "Await" -->
+            <button data-bind="click: function() { $root.queue_item_remove($data.index())}"><i class="fa fa-trash"></i></button>
+            <!-- /ko -->
+            <!-- ko if: $data.state() == "Await" -->
+            <button data-bind="click: function() { $root.queue_item_duplicate($data.index())}"><i class="fa fa-copy"></i></button>
+            <!-- /ko -->
+        </div>
+    </div>
+    <!-- ko if: $data.index() == $root.currentIndex() && 
+     $root.item_info() != null -->
+    <div class="status_container">
+        <span class="item_text" data-bind="text: $root.item_info"></span>
+        <!-- ko if: $root.eject_fail() == true -->
+        <div>
+        <button data-bind="click: function() {$root.device_controll('eject')}"><span class="item_text">Retry</span></button>
+        <button data-bind="click: function() {$root.device_controll('cancel')}"><span class="item_text">Cancel</span></button>
+        </div>
+        <!-- /ko -->
+    </div>
+<!-- /ko -->
+</div>
+
+</div>
+
+<div class="mainModal" data-bind="visible: $root.check_empty('current_queue') && !($root.check_removed())" style="padding: 40px;">
+    <center>There are no items in the current queue</center>
+</div>
+
+<div class="mainModal" data-bind="visible: $root.check_removed()" style="padding: 40px;">
+    <center>There is no existing queue.</center>
+</div>

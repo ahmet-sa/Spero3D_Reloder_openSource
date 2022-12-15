@@ -1,0 +1,230 @@
+/* TODO: Have your plugin's CSS files generated to here. */
+/* TODO: Have your plugin's CSS files generated to here. */
+
+@keyframes openAnim {
+}
+
+@keyframes closeAnim {
+}
+
+#settings_plugin_spero .input-control {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+/* TODO: Have your plugin's CSS files generated to here. */
+
+@keyframes openAnim {
+}
+
+@keyframes closeAnim {
+}
+
+#settings_plugin_speroplugin .input-controll {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+#tab_plugin_speroplugin .headText {
+  font-weight: bold;
+
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  color: #404040;
+}
+
+#tab_plugin_speroplugin .connection {
+  border-bottom: 1px solid #808080;
+}
+
+#tab_plugin_speroplugin .inlineText {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  color: #404040;
+}
+
+#tab_plugin_speroplugin .item_text {
+  max-width: 12em;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  color: #404040;
+  overflow-wrap: break-word;
+}
+#tab_plugin_speroplugin .controllButtons {
+  vertical-align: middle;
+  /* border: #404040 1px solid; */
+}
+
+#tab_plugin_speroplugin .buttonGrid {
+  padding: 20px;
+  grid-gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr 2fr 2fr 1fr;
+  text-emphasis-color:#111cb8 ;
+  color: #111cb8;
+  text-decoration-color: #111cb8;
+
+}
+
+#tab_plugin_speroplugin .modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+#tab_plugin_speroplugin .device {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 5px;
+
+  align-items: center;
+  align-content: center;
+  vertical-align: middle;
+
+  padding-right: 5px;
+  padding-left: 5px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+#tab_plugin_speroplugin .device > div {
+  padding: 10px 30px;
+}
+
+#tab_plugin_speroplugin #queues {
+  border: 1px solid;
+  top: 50%;
+  transform: translateY(25%);
+}
+
+#tab_plugin_speroplugin .mainModal {
+  text-decoration-color: #111cb8;
+  color: #111cb8;
+  
+  background-color: #f7f7f7;
+  border: 0.5px solid #f2f2f2;
+  border-radius: 5%;
+}
+
+#tab_plugin_speroplugin .no_device {
+  padding: 50px;
+}
+
+#tab_plugin_speroplugin .info {
+  padding: 20px;
+  margin: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  transition: width 1s ease-in-out;
+  background-color: #111cb8;
+}
+
+#tab_plugin_speroplugin .dot_disconnected {
+  margin-left: 5px;
+  margin-right: 5px;
+  height: 13px;
+  width: 13px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+#tab_plugin_speroplugin .dot_error {
+  margin-left: 5px;
+  margin-right: 5px;
+  height: 13px;
+  width: 13px;
+  background-color: firebrick;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+#tab_plugin_speroplugin .queue_box {
+  background-color: aquamarine;
+  margin: 30px;
+}
+
+#tab_plugin_speroplugin .queue_header {
+  border-bottom: 1px solid grey;
+}
+
+#tab_plugin_speroplugin .gcode_box {
+  background-color: orangered;
+  margin: 30px;
+}
+
+#tab_plugin_speroplugin .queue_container {
+  padding: 15px;
+}
+
+#tab_plugin_speroplugin .status_container {
+  display: flex;
+  justify-content: space-between;
+  margin: 20px;
+  padding: 20px;
+  background-color: skyblue;
+  border-radius: 5px;
+  border: hidden 1px black;
+}
+
+#tab_plugin_speroplugin .state {
+  display: grid;
+  grid-template-rows: auto auto auto;
+  height: 100%;
+}
+
+#tab_plugin_speroplugin .controll {
+  height: 100%;
+  display: grid;
+  grid-template-rows: 1fr 3fr;
+}
+
+#tab_plugin_speroplugin .state_text {
+  color: black;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+  font-size: 14px;
+}
+
+#tab_plugin_speroplugin .details {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 5px;
+}
+
+#tab_plugin_speroplugin .queue-row-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+}
+#tab_plugin_speroplugin .queue-inner-row-container {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;
+  width: 50%;
+  flex-grow: 2;
+}
+#tab_plugin_speroplugin .count-box {
+  min-width: 30px;
+  max-width: 30px;
+  max-height: 15px;
+}
+#tab_plugin_speroplugin .file-name {
+  flex-shrink: 10;
+  overflow-x: scroll;
+  white-space: nowrap;
+  max-width: 96%;
+  padding-top: 1px;
+}
+#tab_plugin_speroplugin .end-bundle {
+  flex-grow: 2;
+  overflow-x: scroll;
+  white-space: nowrap;
+  align-self: left;
+}
