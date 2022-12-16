@@ -92,15 +92,15 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
 
     async def usb_q(self):
-
+        
         while True:
-            
             self.ports= self.serial.serialPorts()
-            
             if self.portsNumber !=len(self.ports):
                 self.selectedPortName=None
                 self.isShieldConnected="disconnect"
+                self.serialConnection.close()
                 self.messageToJs({'isShieldConnected':self.isShieldConnected}),
+            
             
             
             searchPort=Query()
@@ -109,18 +109,17 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
                 results = self.db.search(searchPort.serial==self.ports[0]["serial"])
                 self.isShieldConnected="Connect"
                 self.messageToJs({'isShieldConnected':self.isShieldConnected}),
-              
+             
                 if results!=None:
                     self.messageToJs({'ports':self.ports})
                     self.serialConnection=self.serial.connect(self.ports[0]["device"])
-               
+            
                 
             if self.selectedPortName==None:
                 self.messageToJs({'ports':self.ports})
                 self.portsNumber=self.ports
                  
             self.portsNumber=len(self.serial.serialPorts())
-
 
 
             await asyncio.sleep(1)
@@ -130,27 +129,14 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
     def on_startup(self, host, port):
 
 
-        print("startuppppppppp")
         fileDir = os.path.join(self.ROOT_DIR,"queues.json")
         fileExist = os.path.exists(fileDir)
         if not fileExist:
             open(fileDir, 'w+')
         self.db = TinyDB(fileDir)
-        results=None
-        searchPort=Query()
-        results = self.db.search(searchPort.serial==self.ports[0]["serial"])
-        print("******************")
-        print(results)
-        if results!=None:
-            
-            self.serialConnection=self.serial.connect(self.ports[0]["device"])
-            print(self.serialConnection)
-        
-        self.selectedPortName="baglı"
-        self.isShieldConnected="Connected"
-        self.messageToJs({'ports':self.ports,"isShieldConnected":self.isShieldConnected})
-
-
+       
+   
+        self.on_after_startup()
 
 
         loop = asyncio.get_event_loop()
@@ -169,20 +155,12 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
 
     def on_after_startup(self):
-
-
-
-
-        # self.SheildControl.buttonInit()
-
-        self.setSettings()                    #set settings fonksiyonu setting jinjasından verileri çeken fonksiyon save ettikten sonra tekrar
-
-                                            #tetikleniyor bu yüzden on startup içinde değilll
         self.queues=self.db.all()
 
         search=Query()
-        self.currentQueue=self.db.get(search.last=="last_queue")                           #db den en son queue suan ki queue atadım
+        self.currentQueue=self.db.get(search.last=="last_queue")                         
 
+        self.setSettings()  
         self.messageToJs({'settings':self.settings2,'currentIndex':self.currentIndex,'bedPosition':self.bedPosition,
                             'motorState':self.motorState,'isShieldConnected':self.isShieldConnected,
                             'queueState':self.queueState,'currentQueue':self.currentQueue,'itemState':self.itemState,})
@@ -199,8 +177,6 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
 
     def setSettings(self):                         #settings jinjadan verileri çeken fonks
-
-
         self.settings2 = {}
         for val in self.settingsParams:
             self.settings2[val] = self._settings.get([val])
@@ -208,7 +184,8 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
 
     def on_event(self, event, payload):                     #event durumları
-        
+        if self.serialConnection!=None:
+            self.serial.read()
 
         self.ports = self.serial.serialPorts()
 
@@ -299,7 +276,8 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
 
     def startEject(self):
-        # self.sheildControl.startSequence()
+        print("start2")
+        self.serial.sendActions("startEject")
         self.ejectState=EjectState.EJECTING.value
         self.waitingEject()
 
@@ -511,6 +489,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
 
 
+
         res = jsonify(success=True)
         res.status_code = 200
         return res
@@ -523,6 +502,10 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
     @ octoprint.plugin.BlueprintPlugin.route("/deviceControl", methods=["POST"])
     @ restricted_access
     def deviceControl(self):
+        
+        
+        if self.serialConnection!=None:
+            self.serial.read()
         data = flask.request.get_json()
 
         if (data["request"]):
@@ -699,15 +682,13 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
     @ octoprint.plugin.BlueprintPlugin.route("/sendStartDatas", methods=["GET"])
     @ restricted_access
     def sendStartDatas(self):
-        
         message ={}
-
         print(self.requiredDatas)
         for val in self.requiredDatas:
-            print(val)
             message[val]=getattr(self,val)
 
         self.messageToJs(message)
+        print(self.queues)
         self.messageToJs({'queues':self.queues})
         self.messageToJs({'ports':self.ports})
         print(self.ports)
@@ -832,18 +813,18 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         res.status_code = 200
         return res
 
-    @ octoprint.plugin.BlueprintPlugin.route("/getQueue", methods=["GET"])
-    @ restricted_access
-    def getQueue(self):
-        queueId = flask.request.args.get("id")
-        for queue in self.queues:
-            if queue["id"] == queueId:
-                self.currentQueue = queue
-                break
+    # @ octoprint.plugin.BlueprintPlugin.route("/getQueue", methods=["GET"])
+    # @ restricted_access
+    # def getQueue(self):
+    #     queueId = flask.request.args.get("id")
+    #     for queue in self.queues:
+    #         if queue["id"] == queueId:
+    #             self.currentQueue = queue
+    #             break
 
-        res = jsonify(success=True)
-        res.status_code = 200
-        return res
+    #     res = jsonify(success=True)
+    #     res.status_code = 200
+    #     return res
 
 
     def get_assets(self):

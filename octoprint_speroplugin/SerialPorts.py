@@ -11,17 +11,13 @@ class SerialPorts(object):
     onStateChange = None 
     connectedSerial=None
     ports=[]
+    
     def __init__(self):
         self.serialPorts()
         pass
         # self.sc = SerialConnectCheck()
         
-    def connectTo(self,serial):
-        
-        # if device serial exist in ports connect
-        return
-    def sendAction(self,action):
-        return
+  
         
     def serialPorts(self):
     
@@ -64,13 +60,25 @@ class SerialPorts(object):
 
 
 
-    def connect(self,p):     
+    def connect(self,p): 
+        
         self.s = serial.Serial(p)
+        self.s.write("[CMD] Summary|123\n".encode())    
         return self.s
         
-        
-    
-  
+    def read(self):
+            if self.s.is_open==True:
+                    if self.s.readable(): 
+                            print("sa")
+                            data_raw = self.s.readline(50)
+                            print(data_raw)
+                        # print(self.s.read(bytesToRead))
+                        # print(self.s.readline(1000))
+            #         print(self.s.read())
+            # print(self.s.readline())   
+          
+            
+
 
 
     def sendActions(self,a):
@@ -80,8 +88,12 @@ class SerialPorts(object):
             self.s.write("[CMD] MotorStop|123\n".encode())
         if a=="forward":
            self.s.write("[CMD] MotorForward|123\n".encode())
-        if a=="eject":
-           self.s.write("[CMD] SequenceStart|123\n".encode())      
+        if a=="startEject":
+            print("start")
+            self.s.write("[CMD] SequenceStart|123\n".encode())      
+      
+
+    
 
 
     # def controlInit(self):
