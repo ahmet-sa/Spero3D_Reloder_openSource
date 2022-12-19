@@ -125,7 +125,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
                 if self.serialConnection.isOpen()==True:
                     self.serial.read()
 
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.4)
 
 
 
@@ -507,13 +507,15 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
     def deviceControl(self):
         
         
-        if self.serialConnection!=None:
-            self.serial.read()
+       
         data = flask.request.get_json()
 
         if (data["request"]):
+            print(data["request"])
             self.serial.sendActions(data["request"])
-
+            if self.serialConnection!=None:
+                    self.serial.read()
+       
         res = jsonify(success=True)
         res.status_code = 200
         return res

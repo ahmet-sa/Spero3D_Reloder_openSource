@@ -66,11 +66,11 @@ class SerialPorts(object):
         return self.s
         
     def read(self):
-            self.s.write("[CMD] Summary|123\n".encode())    
+            # self.s.write("[CMD] Summary|123\n".encode())    
             if self.s.is_open==True:
                     if self.s.readable(): 
                             print("sa")
-                            data_raw = self.s.readline(50)
+                            data_raw = self.s.read_all()
                             print(data_raw)
                         # print(self.s.read(bytesToRead))
                         # print(self.s.readline(1000))
@@ -82,6 +82,7 @@ class SerialPorts(object):
 
 
     def sendActions(self,a):
+        print(a)
         if a=="backward":
            self.s.write("[CMD] MotorBackward|123\n".encode())
            self.read()
