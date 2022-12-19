@@ -326,7 +326,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
                 self.messageToJs({'currentIndex':self.currentIndex})
                 self.startPrint()
             else:
-                print("print and queue finish")
+                print("print andd queue finish")
         else:
             print("queue and print finisheeed")
 
