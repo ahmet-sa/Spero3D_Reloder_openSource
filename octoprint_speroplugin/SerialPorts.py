@@ -22,7 +22,6 @@ class SerialPorts(object):
     def serialPorts(self):
     
         """ Lists serial port names
-
             :raises EnvironmentError:
                 On unsupported or unknown platforms
             :returns:
@@ -67,6 +66,7 @@ class SerialPorts(object):
         return self.s
         
     def read(self):
+            self.s.write("[CMD] Summary|123\n".encode())    
             if self.s.is_open==True:
                     if self.s.readable(): 
                             print("sa")
@@ -84,11 +84,13 @@ class SerialPorts(object):
     def sendActions(self,a):
         if a=="backward":
            self.s.write("[CMD] MotorBackward|123\n".encode())
+           self.read()
         if a=="stop":
             self.s.write("[CMD] MotorStop|123\n".encode())
+            self.read()
         if a=="forward":
            self.s.write("[CMD] MotorForward|123\n".encode())
-        if a=="startEject":
+        if a=="eject":
             print("start")
             self.s.write("[CMD] SequenceStart|123\n".encode())      
       
@@ -102,4 +104,3 @@ class SerialPorts(object):
         
 
 SerialPorts()   
- 

@@ -121,6 +121,9 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
                  
             self.portsNumber=len(self.serial.serialPorts())
 
+            if self.serialConnection!=None:
+                if self.serialConnection.isOpen()==True:
+                    self.serial.read()
 
             await asyncio.sleep(1)
 
@@ -897,4 +900,3 @@ def __plugin_load__():
 
 
     }
-
