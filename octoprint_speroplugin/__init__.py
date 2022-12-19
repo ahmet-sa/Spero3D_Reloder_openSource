@@ -170,7 +170,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
         self.ports=self.serial.serialPorts()
 
-
+        self.serial.onStateChange = self.getStates
         self.messageToJs({'ports':self.ports})
 
 
@@ -242,9 +242,11 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
 
 
-    def getStates(self,ports):           #raspi baglı durumlar için bu yüzden şuan yorum satırında
+    def getStates(self,bed,motor):           #raspi baglı durumlar için bu yüzden şuan yorum satırında
 
-
+        self.bedPosition=bed
+        self.motorState=motor 
+        self.messageToJs({'bedPosition':self.bedPosition,'motorState':self.motorState})
         # self.ports=SerialConnectCheck.sendConnectLost()
         # print("----------------------------------")
         # print("----------------------------------")
@@ -269,9 +271,6 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
 
 
-        print("port güncelle")
-        self.ports=ports
-        self.messageToJs({'ports':self.ports})
 
     def tryEject(self):                                 #eject için uygun sıcaklıgı saplamak için
         self.ejectState = EjectState.WAIT_FOR_TEMP.value

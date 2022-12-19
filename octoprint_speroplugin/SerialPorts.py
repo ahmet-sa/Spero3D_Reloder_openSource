@@ -5,6 +5,7 @@ import serial
 import serial.tools
 import serial.tools.list_ports
 import asyncio
+import chardet
 
 
 class SerialPorts(object):
@@ -14,6 +15,8 @@ class SerialPorts(object):
     
     def __init__(self):
         self.serialPorts()
+        self.bedState="Idle"
+        self.motorState="Idle"
         pass
         # self.sc = SerialConnectCheck()
         
@@ -66,19 +69,31 @@ class SerialPorts(object):
         return self.s
         
     def read(self):
+            data_raw=b"sa"
             # self.s.write("[CMD] Summary|123\n".encode())    
             if self.s.is_open==True:
                     if self.s.readable(): 
-                            print("sa")
                             data_raw = self.s.read_all()
                             print(data_raw)
+                            print("222")
+                            if data_raw!=None:
+                                string = data_raw.decode()
+                                data=string.split(",")
+                            if len(data)>2:
+                                print(data[0])
+                                self.motorState=data[1]
+                                self.bedState=data[2]
+                                self.callOnStateChange()
                         # print(self.s.read(bytesToRead))
                         # print(self.s.readline(1000))
             #         print(self.s.read())
             # print(self.s.readline())   
-          
-            
-
+       
+    def callOnStateChange(self):
+        self.bedPosition=self.bedState
+        self.motorState=self.motorState
+        if self.onStateChange:
+            self.onStateChange(self.bedPosition,self.motorState)
 
 
     def sendActions(self,a):
