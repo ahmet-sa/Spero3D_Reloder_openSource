@@ -69,15 +69,14 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         self.ejectState=EjectState.IDLE.value               #eject durumları
         self.itemState=ItemState.AWAIT.value                #item durumları
         self.currentIndex=0                           #queuenin o anki indexsi
-        self.isShieldConnected = "Disconnect"           #isShieldConnected
+        self.isShieldConnected = "aa"           #isShieldConnected
         self.currentQueue=None                          #su anki queue
         self.currentQueueItem = None                    #secilen veya en son kalan queue nin item dizisi
         self.totalEstimatedTime = 0                     #priniting olan itemin basım zamanı
 
         self.queuesIndex=0   #queueların index numarası queuelara index numarası verdim başlangıcta
                             #en son kalanı ekrana vermek için
-        self.serial = SerialPorts()
-        self.ports = self.serial.serialPorts()
+       
         self.change=None    #cancelling yaparken state değişikliğini tetikletmek için
         self.settings2=[]
         self.selectedPortName=None
@@ -85,47 +84,8 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         self.savedPort=None
         self.firstPorts=None
         self.serialConnection=None
-        self.portsNumber=len(self.serial.serialPorts())
+        self.results=None
 
-
-
-
-
-    async def usb_q(self):
-        
-        while True:
-            self.ports= self.serial.serialPorts()
-            if self.portsNumber !=len(self.ports):
-                self.selectedPortName=None
-                self.isShieldConnected="disconnect"
-                self.serialConnection.close()
-                self.messageToJs({'isShieldConnected':self.isShieldConnected}),
-            
-            
-            
-            searchPort=Query()
-            
-            if len(self.ports)>0:
-                results = self.db.search(searchPort.serial==self.ports[0]["serial"])
-                self.isShieldConnected="Connect"
-                self.messageToJs({'isShieldConnected':self.isShieldConnected}),
-             
-                if results!=None:
-                    self.messageToJs({'ports':self.ports})
-                    self.serialConnection=self.serial.connect(self.ports[0]["device"])
-            
-                
-            if self.selectedPortName==None:
-                self.messageToJs({'ports':self.ports})
-                self.portsNumber=self.ports
-                 
-            self.portsNumber=len(self.serial.serialPorts())
-
-            if self.serialConnection!=None:
-                if self.serialConnection.isOpen()==True:
-                    self.serial.read()
-
-            await asyncio.sleep(0.4)
 
 
 
@@ -137,13 +97,15 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         if not fileExist:
             open(fileDir, 'w+')
         self.db = TinyDB(fileDir)
-       
-   
-        self.on_after_startup()
+        self.serial = SerialPorts()
+        self.ports = self.serial.serialPorts()
+        self.serial.onStateChange = self.getStates   
 
+      
+      
+     
 
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self.usb_q())
+        
         return super().on_startup(host, port)
 
 
@@ -151,29 +113,32 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
 
 
-
-
-    # loop = asyncio.get_event_loop()
-    # loop.run_until_complete(main())
-
-
     def on_after_startup(self):
         self.queues=self.db.all()
-
+        
         search=Query()
         self.currentQueue=self.db.get(search.last=="last_queue")                         
-
-        self.setSettings()  
+        print(self.currentQueue)
+        self.setSettings() 
+        
+        
+     
+         
         self.messageToJs({'settings':self.settings2,'currentIndex':self.currentIndex,'bedPosition':self.bedPosition,
-                            'motorState':self.motorState,'isShieldConnected':self.isShieldConnected,
+                            'motorState':self.motorState,
                             'queueState':self.queueState,'currentQueue':self.currentQueue,'itemState':self.itemState,})
 
-        self.ports=self.serial.serialPorts()
+        searchPort=Query()
+ 
+        self.results=self.db.get(searchPort.items=="find")     
+                            
+        if self.results!=None:
+            print(self.results["id"])
+            self.serial.selectedPortId(self.results["id"])
 
-        self.serial.onStateChange = self.getStates
         self.messageToJs({'ports':self.ports})
 
-
+        
 
 
 
@@ -186,11 +151,9 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
 
 
-    def on_event(self, event, payload):                     #event durumları
-        if self.serialConnection!=None:
-            self.serial.read()
+    def on_event(self, event, payload):     
 
-        self.ports = self.serial.serialPorts()
+ 
 
         self.messageToJs({'ports':self.ports})
 
@@ -242,43 +205,22 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
 
 
-    def getStates(self,bed,motor):           #raspi baglı durumlar için bu yüzden şuan yorum satırında
-
+    def getStates(self,connetion,bed,motor):           #raspi baglı durumlar için bu yüzden şuan yorum satırında
+        if connetion==True:
+            self.isShieldConnected="Connected"
+        if connetion==False:
+            self.isShieldConnected="Disconnected"
+       
         self.bedPosition=bed
-        self.motorState=motor 
-        self.messageToJs({'bedPosition':self.bedPosition,'motorState':self.motorState})
-        # self.ports=SerialConnectCheck.sendConnectLost()
-        # print("----------------------------------")
-        # print("----------------------------------")
-        # print("----------------------------------")
-        # print(self.ports)
-        # print("----------------------------------")
-
-        # self.messageToJs({'ports':self.ports})
-
-        # if ejectFaill==True and self.queueState!="STARTED" and self.queueState!="IDLE":
-        #     self.itemState=ItemState.EJECT_FAIL.value
-        #     self.queueState=QueueState.PAUSED.value
-
-        #     if self.currentIndex+1==self.currentQueue["items"].__len__():
-        #         self.doItemsStateAwait()
-        #     self.messageToJs({'itemState':self.itemState,'queueState':self.queueState})
-
-        # self.bedPosition=bed
-        # self.motorState=motor
-        # self.ejectFail=ejectFaill
-        # self.messageToJs({'bedPosition':self.bedPosition,'motorState':self.motorState})
-
-
+        self.motorState=motor
+        self.messageToJs({"isShieldConnected":self.isShieldConnected,'bedPosition':self.bedPosition,'motorState':self.motorState})
+    
 
 
     def tryEject(self):                                 #eject için uygun sıcaklıgı saplamak için
         self.ejectState = EjectState.WAIT_FOR_TEMP.value
 
-
-
     def startEject(self):
-        print("start2")
         self.serial.sendActions("startEject")
         self.ejectState=EjectState.EJECTING.value
         self.waitingEject()
@@ -483,11 +425,11 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
         data = flask.request.get_json()
 
-        print(data["request"])
-        self.db.insert(data["request"])
-
-        self.selectedPortName=data
-        self.serial.connect(data["request"]["device"])
+        data2=data["request"]["serial"]
+        self.db.insert({
+            'id': data2,
+            'items': "find",
+        })
 
 
 
@@ -510,10 +452,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         data = flask.request.get_json()
 
         if (data["request"]):
-            print(data["request"])
             self.serial.sendActions(data["request"])
-            if self.serialConnection!=None:
-                    self.serial.read()
        
         res = jsonify(success=True)
         res.status_code = 200
@@ -686,16 +625,14 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
     @ octoprint.plugin.BlueprintPlugin.route("/sendStartDatas", methods=["GET"])
     @ restricted_access
     def sendStartDatas(self):
+  
         message ={}
-        print(self.requiredDatas)
         for val in self.requiredDatas:
             message[val]=getattr(self,val)
 
         self.messageToJs(message)
-        print(self.queues)
         self.messageToJs({'queues':self.queues})
         self.messageToJs({'ports':self.ports})
-        print(self.ports)
 
 
 

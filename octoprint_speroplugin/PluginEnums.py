@@ -4,6 +4,10 @@ from enum import Enum
 
 
 
+class UsbState(str,Enum):
+    Searching='Searching'
+    Connected='Connected'
+
 
 class ItemState(Enum):
     

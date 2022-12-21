@@ -1,1 +1,168 @@
-{"_default": {"1": {"items": [{"index": 0, "name": "1dk_.gcode", "path": "1dk_.gcode", "sd": "false", "state": "Await", "timeLeft": 60.515274061985856}, {"index": 1, "name": "2dk_.gcode", "path": "2dk_.gcode", "sd": "false", "state": "Await", "timeLeft": 31.39699596306056}, {"index": 2, "name": "3dk_.gcode", "path": "3dk_.gcode", "sd": "false", "state": "Await", "timeLeft": 201.67166492333982}, {"index": 3, "name": "2dk_.gcode", "path": "2dk_.gcode", "sd": "false", "state": "Await", "timeLeft": 31.39699596306056}, {"index": 3, "name": "2dk_.gcode", "path": "2dk_.gcode", "sd": "false", "state": "Await", "timeLeft": 31.39699596306056}], "id": "fa31cdd1-e2dc-488b-bd99-c60d8df28a77", "updateTime": "2022-11-03 08:18:20.877067", "createTime": "2022-11-03 08:07:16.482680", "name": "last2", "index": 0, "last": "none"}, "2": {"items": [{"index": 0, "name": "1dk_.gcode", "path": "1dk_.gcode", "sd": "false", "state": "Await", "timeLeft": 60.515274061985856}, {"index": 1, "name": "2dk_.gcode", "path": "2dk_.gcode", "sd": "false", "state": "Await", "timeLeft": 31.39699596306056}, {"index": 2, "name": "3dk_.gcode", "path": "3dk_.gcode", "sd": "false", "state": "Await", "timeLeft": 201.67166492333982}], "id": "8a271dd8-5895-43eb-861c-0454eb8a344b", "updateTime": "2022-11-03 08:10:38.639625", "createTime": "2022-11-03 08:10:38.639724", "name": "gg", "index": 1, "last": "none"}, "3": {"items": [{"index": 0, "name": "kisa_kare_none.gcode", "path": "kisa_kare_none.gcode", "sd": "false", "state": "Await", "timeLeft": 916.3011377223827}, {"index": 1, "name": "kup_none.gcode", "path": "kup_none.gcode", "sd": "false", "state": "Await", "timeLeft": 1689.4504893208532}, {"index": 2, "name": "silindir_none.gcode", "path": "silindir_none.gcode", "sd": "false", "state": "Await", "timeLeft": 2128.6326503837554}, {"index": 3, "name": "dikdortgen_none.gcode", "path": "dikdortgen_none.gcode", "sd": "false", "state": "Await", "timeLeft": 1897.1519935779065}], "id": "b33c4929-ec5e-49fe-bbf9-28912bbf4140", "updateTime": "2022-11-22 13:02:23.710005", "createTime": "2022-11-22 13:02:23.714227", "name": "deneme", "index": 0, "last": "none"}, "5": {"serialId": {"device": "/dev/ttyACM0", "serial": "7g5R6zeKtWqh"}}, "11": {"device": "/dev/ttyACM0", "serial": "7g5R6zeKtWqh"}, "14": {"device": "/dev/ttyACM1", "serial": "7g5R6zeKtWqh"}, "16": {"device": "/dev/ttyACM2", "serial": "7g5R6zeKtWqh"}, "17": {"items": [{"index": 0, "name": "1dk_.gcode", "path": "1dk_.gcode", "sd": "false", "state": "Await", "timeLeft": 60.515274061985856}, {"index": 1, "name": "2dk_.gcode", "path": "2dk_.gcode", "sd": "false", "state": "Await", "timeLeft": 31.39699596306056}, {"index": 2, "name": "3dk_.gcode", "path": "3dk_.gcode", "sd": "false", "state": "Await", "timeLeft": 201.67166492333982}], "id": "cd98aab7-4389-48b1-9183-f36aa095fdc5", "updateTime": "2022-12-15 15:12:27.867013", "createTime": "2022-12-15 15:12:27.867037", "name": "New Queue", "index": 0, "last": "last_queue"}, "18": {"device": "/dev/ttyACM0", "serial": "7g5R6zeKtWqh"}, "19": {"device": "/dev/ttyACM2", "serial": "7g5R6zeKtWqh"}, "20": {"device": "/dev/ttyACM1", "serial": "7g5R6zeKtWqh"}, "21": {"device": "/dev/ttyACM2", "serial": "7g5R6zeKtWqh"}, "22": {"device": "/dev/ttyACM2", "serial": "7g5R6zeKtWqh"}, "23": {"device": "/dev/ttyACM2", "serial": "7g5R6zeKtWqh"}, "24": {"device": "/dev/ttyACM2", "serial": "7g5R6zeKtWqh"}, "25": {"device": "/dev/ttyACM2", "serial": "7g5R6zeKtWqh"}, "26": {"device": "/dev/ttyACM0", "serial": "7g5R6zeKtWqh"}, "27": {"device": "/dev/ttyACM0", "serial": "7g5R6zeKtWqh"}, "28": {"device": "/dev/ttyACM0", "serial": "7g5R6zeKtWqh"}, "29": {"device": "/dev/ttyACM0", "serial": "xn4SOUSTCntY"}, "30": {"device": "/dev/ttyACM1", "serial": "xn4SOUSTCntY"}, "31": {"device": "/dev/ttyACM0", "serial": "xn4SOUSTCntY"}, "32": {"device": "/dev/ttyACM1", "serial": "xn4SOUSTCntY"}, "33": {"device": "/dev/ttyACM1", "serial": "xn4SOUSTCntY"}, "34": {"device": "/dev/ttyACM1", "serial": "xn4SOUSTCntY"}, "35": {"device": "/dev/ttyACM0", "serial": "xn4SOUSTCntY"}, "36": {"device": "/dev/ttyACM0", "serial": "xn4SOUSTCntY"}, "37": {"device": "/dev/ttyACM0", "serial": "xn4SOUSTCntY"}, "38": {"device": "/dev/ttyACM0", "serial": "xn4SOUSTCntY"}, "39": {"device": "/dev/ttyACM1", "serial": "xn4SOUSTCntY"}, "40": {"device": "/dev/ttyACM0", "serial": "xn4SOUSTCntY"}}}
+{
+  "_default": {
+    "1": {
+      "items": [
+        {
+          "index": 0,
+          "name": "1dk_.gcode",
+          "path": "1dk_.gcode",
+          "sd": "false",
+          "state": "Await",
+          "timeLeft": 60.515274061985856
+        },
+        {
+          "index": 1,
+          "name": "2dk_.gcode",
+          "path": "2dk_.gcode",
+          "sd": "false",
+          "state": "Await",
+          "timeLeft": 31.39699596306056
+        },
+        {
+          "index": 2,
+          "name": "3dk_.gcode",
+          "path": "3dk_.gcode",
+          "sd": "false",
+          "state": "Await",
+          "timeLeft": 201.67166492333982
+        },
+        {
+          "index": 3,
+          "name": "2dk_.gcode",
+          "path": "2dk_.gcode",
+          "sd": "false",
+          "state": "Await",
+          "timeLeft": 31.39699596306056
+        },
+        {
+          "index": 3,
+          "name": "2dk_.gcode",
+          "path": "2dk_.gcode",
+          "sd": "false",
+          "state": "Await",
+          "timeLeft": 31.39699596306056
+        }
+      ],
+      "id": "fa31cdd1-e2dc-488b-bd99-c60d8df28a77",
+      "updateTime": "2022-11-03 08:18:20.877067",
+      "createTime": "2022-11-03 08:07:16.482680",
+      "name": "last2",
+      "index": 0,
+      "last": "none"
+    },
+    "2": {
+      "items": [
+        {
+          "index": 0,
+          "name": "1dk_.gcode",
+          "path": "1dk_.gcode",
+          "sd": "false",
+          "state": "Await",
+          "timeLeft": 60.515274061985856
+        },
+        {
+          "index": 1,
+          "name": "2dk_.gcode",
+          "path": "2dk_.gcode",
+          "sd": "false",
+          "state": "Await",
+          "timeLeft": 31.39699596306056
+        },
+        {
+          "index": 2,
+          "name": "3dk_.gcode",
+          "path": "3dk_.gcode",
+          "sd": "false",
+          "state": "Await",
+          "timeLeft": 201.67166492333982
+        }
+      ],
+      "id": "8a271dd8-5895-43eb-861c-0454eb8a344b",
+      "updateTime": "2022-11-03 08:10:38.639625",
+      "createTime": "2022-11-03 08:10:38.639724",
+      "name": "gg",
+      "index": 1,
+      "last": "none"
+    },
+    "3": {
+      "items": [
+        {
+          "index": 0,
+          "name": "kisa_kare_none.gcode",
+          "path": "kisa_kare_none.gcode",
+          "sd": "false",
+          "state": "Await",
+          "timeLeft": 916.3011377223827
+        },
+        {
+          "index": 1,
+          "name": "kup_none.gcode",
+          "path": "kup_none.gcode",
+          "sd": "false",
+          "state": "Await",
+          "timeLeft": 1689.4504893208532
+        },
+        {
+          "index": 2,
+          "name": "silindir_none.gcode",
+          "path": "silindir_none.gcode",
+          "sd": "false",
+          "state": "Await",
+          "timeLeft": 2128.6326503837554
+        },
+        {
+          "index": 3,
+          "name": "dikdortgen_none.gcode",
+          "path": "dikdortgen_none.gcode",
+          "sd": "false",
+          "state": "Await",
+          "timeLeft": 1897.1519935779065
+        }
+      ],
+      "id": "b33c4929-ec5e-49fe-bbf9-28912bbf4140",
+      "updateTime": "2022-11-22 13:02:23.710005",
+      "createTime": "2022-11-22 13:02:23.714227",
+      "name": "deneme",
+      "index": 0,
+      "last": "none"
+    },
+    "17": {
+      "items": [
+        {
+          "index": 0,
+          "name": "1dk_.gcode",
+          "path": "1dk_.gcode",
+          "sd": "false",
+          "state": "Await",
+          "timeLeft": 60.515274061985856
+        },
+        {
+          "index": 1,
+          "name": "2dk_.gcode",
+          "path": "2dk_.gcode",
+          "sd": "false",
+          "state": "Await",
+          "timeLeft": 31.39699596306056
+        },
+        {
+          "index": 2,
+          "name": "3dk_.gcode",
+          "path": "3dk_.gcode",
+          "sd": "false",
+          "state": "Await",
+          "timeLeft": 201.67166492333982
+        }
+      ],
+      "id": "cd98aab7-4389-48b1-9183-f36aa095fdc5",
+      "updateTime": "2022-12-15 15:12:27.867013",
+      "createTime": "2022-12-15 15:12:27.867037",
+      "name": "New Queue",
+      "index": 0,
+      "last": "last_queue"
+    },
+    "18": { "id": "xn4SOUSTCntY" },
+    "19": { "id": "xn4SOUSTCntY" },
+    "20": { "id": "xn4SOUSTCntY" },
+    "21": { "id": "xn4SOUSTCntY", "items": "find" }
+  }
+}
