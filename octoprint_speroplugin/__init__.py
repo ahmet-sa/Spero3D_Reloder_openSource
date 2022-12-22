@@ -119,6 +119,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         search=Query()
         self.currentQueue=self.db.get(search.last=="last_queue")                         
         print(self.currentQueue)
+        print("***********************************")
         self.setSettings() 
         
         
@@ -128,6 +129,13 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
                             'motorState':self.motorState,
                             'queueState':self.queueState,'currentQueue':self.currentQueue,'itemState':self.itemState,})
 
+
+        
+        self.selectedListId()
+
+        
+
+    def selectedListId(self):
         searchPort=Query()
  
         self.results=self.db.get(searchPort.items=="find")     
@@ -135,11 +143,6 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         if self.results!=None:
             print(self.results["id"])
             self.serial.selectedPortId(self.results["id"])
-
-        self.messageToJs({'ports':self.ports})
-
-        
-
 
 
 
@@ -221,13 +224,15 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         self.ejectState = EjectState.WAIT_FOR_TEMP.value
 
     def startEject(self):
-        self.serial.sendActions("startEject")
+        print("start")
+        self.serial.sendActions("eject")
         self.ejectState=EjectState.EJECTING.value
         self.waitingEject()
 
 
 
     def waitingEject(self):
+        print(self.ejectState)
         if self.ejectState =="EJECTING_FINISHED":
             # self.controlEject=self.sheildControl.sequenceFinish
 
@@ -253,10 +258,10 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
             self.nextItem()
         else:
 
-            # if self.sheildControl.state=="IDLE":
-            #     self.itemState=ItemState.FINISHED.value
-            #     self.ejectState=EjectState.EJECTING_FINISHED.value
-            #     self.messageToJs({'itemState':self.itemState})
+            if self.serial.state=="IDLE":
+                self.itemState=ItemState.FINISHED.value
+                self.ejectState=EjectState.EJECTING_FINISHED.value
+                self.messageToJs({'itemState':self.itemState})
 
             waitTimer2 = Timer(1,self.waitingEject,args=None,kwargs=None)
             waitTimer2.start()
@@ -424,12 +429,23 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
     def selectedPort(self):
 
         data = flask.request.get_json()
+        searchPort=Query()
+        last_db=self.db.search(searchPort.items == "find")
+
+
+        if(len(last_db) > 1 and last_db != None):
+            self.db.update({
+                'find':"none"
+            },searchPort.items == "last_queue")
+        
 
         data2=data["request"]["serial"]
         self.db.insert({
             'id': data2,
             'items': "find",
         })
+        
+        self.selectedListId()
 
 
 
@@ -754,18 +770,18 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         res.status_code = 200
         return res
 
-    # @ octoprint.plugin.BlueprintPlugin.route("/getQueue", methods=["GET"])
-    # @ restricted_access
-    # def getQueue(self):
-    #     queueId = flask.request.args.get("id")
-    #     for queue in self.queues:
-    #         if queue["id"] == queueId:
-    #             self.currentQueue = queue
-    #             break
+    @ octoprint.plugin.BlueprintPlugin.route("/getQueue", methods=["GET"])
+    @ restricted_access
+    def getQueue(self):
+        queueId = flask.request.args.get("id")
+        for queue in self.queues:
+            if queue["id"] == queueId:
+                self.currentQueue = queue
+                break
 
-    #     res = jsonify(success=True)
-    #     res.status_code = 200
-    #     return res
+        res = jsonify(success=True)
+        res.status_code = 200
+        return res
 
 
     def get_assets(self):

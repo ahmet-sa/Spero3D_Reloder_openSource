@@ -72,7 +72,7 @@
               <span class="items_space">
                 Motor State :
               </span>
-              <span class="items_space2" data-bind="text: motorState"></span>
+              <span class="items_space2" data-bind="text: motorState" ></span>
   
       
           </div>
@@ -100,7 +100,7 @@
       <div class="half buttons" >
           <button class="buttons_item" title="The table rail moves backward." data-bind="event: {mousedown: function(){$root.deviceControl('backward')},
                           mouseup:function(){$root.deviceControl('stop')}},
-                          enable: ($root.queueState() == 'IDLE' || $root.queueState() == 'PAUSED')"
+                          visible:($root.isShieldConnected()=='Connected'),enable: ($root.queueState() == 'IDLE' || $root.queueState() == 'PAUSED')&&($root.isShieldConnected()=='Connected')"
                           >
               
                 <svg width="24" height="24" viewBox="0 0 35 23" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -117,7 +117,7 @@
   
           <button class="buttons_item" title="The table rail moves forward." data-bind="event: {mousedown: function(){$root.deviceControl('forward')},
                       mouseup:function(){$root.deviceControl('stop')}},
-                      enable: ($root.queueState() == 'IDLE' || $root.queueState() == 'PAUSED')">
+                      visible:($root.isShieldConnected()=='Connected'),enable: ($root.queueState() == 'IDLE' || $root.queueState() == 'PAUSED')&&($root.isShieldConnected()=='Connected')">
               <svg width="24" height="24" viewBox="0 0 35 23" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M0.93153 10.4393C0.345745 11.0251 0.345745 11.9749 0.93153 12.5607L10.4775 22.1066C11.0633 22.6924 12.013 22.6924 12.5988 22.1066C13.1846 21.5208 13.1846 20.5711 12.5988 19.9853L4.11351 11.5L12.5988 3.01472C13.1846 2.42893 13.1846 1.47919 12.5988 0.893398C12.013 0.307611 11.0633 0.307611 10.4775 0.893398L0.93153 10.4393ZM34.0078 10L1.99219 10V13L34.0078 13V10Z" fill="#777777"/>
                 </svg>
@@ -129,7 +129,7 @@
           </button>
   
           <button class="buttons_item" data-bind="click: function(){$root.deviceControl('eject')}, 
-                          enable:($root.queueState() == 'IDLE' || $root.queueState() == 'PAUSED')" title="Cancel ejecting (it only takes effect when eject starts)" >
+                          visible:($root.isShieldConnected()=='Connected'),enable:($root.queueState() == 'IDLE' || $root.queueState() == 'PAUSED')&&($root.isShieldConnected()=='Connected')" title="Cancel ejecting (it only takes effect when eject starts)" >
               <svg width="24" height="24" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M14 0C6.28053 0 0 6.28011 0 14C0 21.7199 6.28011 28 14 28C21.7199 28 28 21.7199 28 14C28 6.28011 21.7195 0 14 0ZM2.56418 14C2.56418 7.69425 7.69425 2.56418 14 2.56418C16.8411 2.56418 19.442 3.60823 21.4442 5.33008L5.33008 21.4442C3.60823 19.442 2.56418 16.8411 2.56418 14ZM14 25.4358C11.458 25.4358 9.10797 24.6012 7.20706 23.193L23.1926 7.20749C24.6008 9.1084 25.4354 11.4585 25.4354 14.0004C25.4358 20.3057 20.3057 25.4358 14 25.4358Z" fill="#777777"/>
                 </svg>
@@ -140,8 +140,8 @@
           
           </button>   
   
-          <button class="buttons_item" data-bind="click: function(){$root.deviceControl('stop')}, 
-                          enable: ($root.queueState() == 'IDLE' || $root.queueState() == 'PAUSED')" title="Cancel ejecting (it only takes effect when eject starts)" >
+          <button class="buttons_item" data-bind="click: function(){$root.deviceControl('stop')}
+                          ,visible:($root.isShieldConnected()=='Connected'),enable: ($root.queueState() == 'IDLE' || $root.queueState() == 'PAUSED')&&($root.isShieldConnected()=='Connected')" title="Cancel ejecting (it only takes effect when eject starts)" >
               <svg width="24" height="24" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M14 0C6.28053 0 0 6.28011 0 14C0 21.7199 6.28011 28 14 28C21.7199 28 28 21.7199 28 14C28 6.28011 21.7195 0 14 0ZM2.56418 14C2.56418 7.69425 7.69425 2.56418 14 2.56418C16.8411 2.56418 19.442 3.60823 21.4442 5.33008L5.33008 21.4442C3.60823 19.442 2.56418 16.8411 2.56418 14ZM14 25.4358C11.458 25.4358 9.10797 24.6012 7.20706 23.193L23.1926 7.20749C24.6008 9.1084 25.4354 11.4585 25.4354 14.0004C25.4358 20.3057 20.3057 25.4358 14 25.4358Z" fill="#777777"/>
                 </svg>

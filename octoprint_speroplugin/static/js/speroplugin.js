@@ -48,150 +48,7 @@ $(function() {
        
 
 
-        
-        self.settings.saveData = function (data, successCallback, setAsSending) {
-            var options;
-            var validated=true;
-            if (_.isPlainObject(successCallback)) {
-                options = successCallback;
-            } else {
-                options = {
-                    success: successCallback,
-                    sending: setAsSending === true
-                };
-            }
-            self.settings.settingsDialog.trigger("beforeSave");
 
-            self.settings.sawUpdateEventWhileSending = false;
-            self.settings.sending(data === undefined || options.sending || false);
-
-            if (data === undefined) {
-                // we also only send data that actually changed when no data is specified
-                var localData = self.settings.getLocalData();
-                data = getOnlyChangedData(localData, self.settings.lastReceivedSettings);
-                if(_.has(data,'plugins.speroplugin')){
-
-                    if(data.plugins.speroplugin["targetBedTemp"] != undefined){               //degişim olan verileri değistirme
-                     self.settings2()["targetBedTemp"]=data.plugins.speroplugin["targetBedTemp"]
-                    }
-                    if(data.plugins.speroplugin["motorPin1"] != undefined){
-                        self.settings2()["motorPin1"]=data.plugins.speroplugin["motorPin1"] 
-                    }
-                    if(data.plugins.speroplugin["motorPin2"] != undefined){
-                            self.settings2()["motorPin2"]=data.plugins.speroplugin["motorPin2"]
-                    }
-                    if(data.plugins.speroplugin["switchFront"] != undefined){
-                        self.settings2()["switchFront"]=data.plugins.speroplugin["switchFront"]
-                    }
-                    if(data.plugins.speroplugin["switchBack"] != undefined){
-                           self.settings2()["switchBack"]=data.plugins.speroplugin["switchBack"] 
-                    }
-                    if(data.plugins.speroplugin["buttonForward"] != undefined){
-                               self.settings2()["buttonForward"]=data.plugins.speroplugin["buttonForward"]
-                    }
-                    if(data.plugins.speroplugin["buttonBackword"] != undefined){
-                        self.settings2()["buttonBackword"]=data.plugins.speroplugin["buttonBackword"]
-                    }
-                    if(data.plugins.speroplugin["buttonSequence"] != undefined){
-                           self.settings2()["buttonSequence"]=data.plugins.speroplugin["buttonSequence"] 
-                    }
-                    if(data.plugins.speroplugin["delaySeconds"] != undefined){
-                               self.settings2()["delaySeconds"]=data.plugins.speroplugin["delaySeconds"]
-                    }
-                          
-                      
-                  
-
-                    var settings2Array=Object.values(self.settings2())    // dict to list
-                               
-
-
-                    let toMap = {};
-                    let resultToReturn = false;
-                    for (let i = 0; i < 7; i++) {
-                        console.log(settings2Array[i]);
-                
-                        if (toMap[settings2Array[i]]) {
-                            console.log(settings2Array[i])
-                            resultToReturn = true;
-                            break;
-                        }                                                        //aynı elemanlar var mı                                                                
-                
-                        toMap[settings2Array[i]] = true;
-                    }
-                
-                    if (resultToReturn) {
-                        
-                        console.log('Duplicate elements exist');      
-                        validated=false
-                        }
-                    else {
-                        validated=true
-                        console.log('Duplicates dont exist ');
-                    }
-                   data.plugins.speroplugin.error =!validated;
-                    
-
-
-                            
-                  
-             
-
-
-
-
-
-         
-
-                    //TODO: check there is any validation issue
-                    // sorun varsa -> validated=false
-                    // sorun yoksa -> validated=true
-                 
-                    
-
-                }
-
-            }
-
-            // final validation
-            if (self.settings.testFoldersDuplicate()) {
-                // duplicate folders configured, we refuse to send any folder config
-                // to the server
-                delete data.folder;
-            }
-
-            self.settings.active = true;
-            return OctoPrint.settings
-                .save(data)
-                .done(function (data, status, xhr) {
-                    self.settings.ignoreNextUpdateEvent = !self.settings.sawUpdateEventWhileSending;
-                    self.settings.active = false;
-                    self.settings.receiving(true);
-                    self.settings.sending(false);
-
-                    try {
-                        self.settings.fromResponse(data);
-                        if(validated){
-                            if (options.success) options.success(data, status, xhr);
-
-                        }else{
-                            if (options.error) options.error(xhr, status, "Validation Error");
-                        }
-
-                    } finally {
-                        self.settings.receiving(false);
-                    }
-                })
-                .fail(function (xhr, status, error) {
-                    self.settings.sending(false);
-                    self.settings.active = false;
-                    if (options.error) options.error(xhr, status, error);
-                })
-                .always(function (xhr, status) {
-                    if (options.complete) options.complete(xhr, status);
-                });
-        };
-       
  
         self.onBeforeBinding = function () {
             try {
@@ -279,11 +136,12 @@ $(function() {
                     // console.log('queueState',self.queueState()); 
               
                     console.log('queues',self.queues())
-                    // console.log('currentQueue',self.currentQueue());
+                    console.log('currentQueue',self.currentQueue());
                     // console.log('settings',self.settings2())
 
+                    console.log("currentItemsss")
+                    console.log(self.currentItems())
                     
-                   
                     if(self.queueState()=="IDLE"){
                         self.itemState("Await");
                         for(let i=0;i<self.currentItems().length;i++){
@@ -444,7 +302,7 @@ $(function() {
         }};
         self.selectedQueue.subscribe(function (q) {
             if (q != undefined || q != null) {
-            
+          
                 self.getQueue(q.id);
                 self.queueName(q.name)
                 self.queuesIndex(q.index)
@@ -712,9 +570,7 @@ $(function() {
            
             const newName = e.target.value??'';
             console.log(newName)
-            console.log(self.selectedQueue())
-            console.log(self.queues())
-            console.log(self.queuesIndex())
+
          
             try {
                 $.ajax({

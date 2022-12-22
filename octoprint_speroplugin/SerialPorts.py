@@ -7,7 +7,7 @@ import serial.tools.list_ports
 import asyncio
 import time
 import threading
-
+from octoprint_speroplugin.PluginEnums import ShieldState,BedPosition
 
 class SerialPorts(object):
     onStateChange = None 
@@ -17,9 +17,9 @@ class SerialPorts(object):
     ports=[]
     
     def __init__(self):
+        self.state = ShieldState.IDLE.value
         self.readthread=None
-        # self.startUsbThred()
-        self.bedState="Idle"
+        self.bedState="Middle"
         self.motorState="Idle"
         self.connection=False
         self.databasePorts=None
@@ -52,11 +52,9 @@ class SerialPorts(object):
             raise EnvironmentError('Unsupported platform')
 
         ports = serial.tools.list_ports.comports()
-        # print("***************************************************************")
         self.ports = []
         for port in ports:
             try:
-                # print("port:{}, serial: {}\n".format(port.device,port.serial_number))
                 if (port.manufacturer=="Spero3D"):
                     self.ports.append({"device":port.device,"serial":port.serial_number})
             except (OSError, serial.SerialException):
@@ -77,7 +75,6 @@ class SerialPorts(object):
 
 
     def selectedPortId(self,p): 
-        print(p)
         self.serialId = p
         self.portList()
         
@@ -91,12 +88,13 @@ class SerialPorts(object):
                 try:
                     if len(data)>0:
                         if data[0]["serial"] == self.serialId:
+                            
                             self.serialConnect(data[0]["device"])
                             self.connection=True
                             break
                         else:
                             self.connection=False
-                            self.time.sleep(0.5)
+                            time.sleep(0.5)
                             print("please select port")
                             self.portList()
                             break
@@ -108,36 +106,26 @@ class SerialPorts(object):
             self.listThread = threading.Thread(target=self.portList)
             self.listThread.start()
   
-    
-                
 
-        
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    # def readFromUsb(self,start=True):
-    #     if start:
-            
-    #         self.readthread = threading.Thread(target=self.readFromPort, args=(self.s))
-    #         self.readthread.start()
-    #     else:
-    #         self.readthread.close()
-    #         self.portList(True)
-    
+
     def handle_data(self,data):
-        data=data.split(":")
+        
+        data=data.replace("[INFO]"," ")
+        data=data.split(":")     
         if len(data)>1:   
-            if data[1]=="Forward\n" or data[1]=="Idle\n" or data[1]=="Backward\n":
+            if data[0]=="  M":
                 self.motorState=data[1]
                 self.callOnStateChange()
-        
+            if data[0]=="  B":
+                self.bedState=data[1]
+                self.callOnStateChange()
+            if data[0]=="  C":
+                if data[1]=="Idle\n":
+                    self.state=ShieldState.IDLE.value
+                    
+                    
+
+                
     def readFromPort(self):
 
         while self.serialConnection.isOpen():
@@ -175,7 +163,8 @@ class SerialPorts(object):
         if a=="forward":
            self.serialConnection.write("[CMD] MotorForward|123\n".encode())
         if a=="eject":
-            print("start")
+            self.state=ShieldState.ISINSEQUENACE.value
+          
             self.serialConnection.write("[CMD] SequenceStart|123\n".encode())      
       
 
