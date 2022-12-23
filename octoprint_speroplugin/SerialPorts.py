@@ -24,6 +24,7 @@ class SerialPorts(object):
         self.connection=False
         self.databasePorts=None
         self.listThread =None
+        self.serialConnection=None
        
         pass
 
@@ -64,10 +65,9 @@ class SerialPorts(object):
 
     def serialConnect(self,p):
         self.serialConnection=serial.Serial(port=p)
-        print("connected")
+        print("connected") 
         self.connection=True
         self.callOnStateChange()
-        self.readFromPort()
        
         
   
@@ -76,6 +76,7 @@ class SerialPorts(object):
 
     def selectedPortId(self,p): 
         self.serialId = p
+        print(self.serialId)
         self.portList()
         
 
@@ -84,20 +85,25 @@ class SerialPorts(object):
             self.callOnStateChange()
         
             while self.connection==False:
-                data=self.serialPorts()
+                self.ports=self.serialPorts()
+                self.callOnStateChange()
                 try:
-                    if len(data)>0:
-                        if data[0]["serial"] == self.serialId:
-                            
-                            self.serialConnect(data[0]["device"])
+                    if len(self.ports)>0:
+                        if self.ports[0]["serial"] == self.serialId:
+                            self.serialConnect(self.ports[0]["device"])
+                            self.serialConnection.write("[CMD] Summary|123\n".encode())   
                             self.connection=True
+                            self.readFromPort()
                             break
                         else:
-                            self.connection=False
                             time.sleep(0.5)
                             print("please select port")
+                            if self.connection==True:
+                                break
+                            self.ports=self.serialPorts()   
                             self.portList()
-                            break
+                            self.callOnStateChange()  
+      
                     
             
                 except  serial.serialutil.SerialException:
@@ -109,7 +115,6 @@ class SerialPorts(object):
 
 
     def handle_data(self,data):
-        
         data=data.replace("[INFO]"," ")
         data=data.split(":")     
         if len(data)>1:   
@@ -127,7 +132,7 @@ class SerialPorts(object):
 
                 
     def readFromPort(self):
-
+        print(self.serialConnection)
         while self.serialConnection.isOpen():
             try:
                 reading = self.serialConnection.readline().decode()
@@ -152,7 +157,7 @@ class SerialPorts(object):
         self.bedPosition=self.bedState
         self.motorPosition=self.motorState
         if self.onStateChange:
-            self.onStateChange(self.connectt,self.bedPosition,self.motorPosition)
+            self.onStateChange(self.connectt,self.bedPosition,self.motorPosition,self.ports)
 
 
     def sendActions(self,a):

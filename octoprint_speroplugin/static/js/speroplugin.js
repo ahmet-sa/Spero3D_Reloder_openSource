@@ -133,6 +133,8 @@ $(function() {
                     // console.log('bedPosition',self.bedPosition());
                     // console.log('motorState',self.motorState());
                     console.log('isShieldConnected',self.isShieldConnected());
+                    console.log('currentItems',self.currentItems());
+                    console.log('queueName',self.queueName());
                     // console.log('queueState',self.queueState()); 
               
                     console.log('queues',self.queues())
@@ -155,14 +157,11 @@ $(function() {
                     }
 
 
-                    if (self.selectedQueue()==undefined){
-                        self.selectedQueue(self.currentQueue());
-
-                    }
+                
 
                     var item = self.currentItems()[self.currentIndex()];
                     item().state(self.itemState());
-                    // self.currentQueueItems(self.currentItems()["items"])
+                    self.currentQueueItems(self.currentItems()["items"])
 
                     // console.log('currentQueueItems',self.currentQueueItems());
 
@@ -279,18 +278,32 @@ $(function() {
                             "X-Api-Key": UI_API_KEY,
                         },
                         success() {
+                            console.log(self.queues())
+
                             ko.utils.arrayFirst(self.queues(), function (item) {
+                                console.log(item)
+                                console.log(item.id)
                                 var reload =
                                     self.queueState() == "IDLE"
+                                    console.log("sa")
+                                    console.log(item.id)
+                                    console.log(item.items)
                                 if (item.id == id) {
+                                    console.log("yes")
                                     self.queueId(item.id);
                                     self.queueName(item.name);
-
+                                    console.log(item)
+                                    console.log(item["items"])
+                                    console.log(item.items)
+                                    self.reload_items(item.items)
+                                    console.log(item.items)
                                     var queue = self.reload_items(
                                         item.items,
                                         (reload = reload)
                                     );
+                                    console.log(queue)
                                     console.log("Array get successfull!");
+                                    
                                     return queue;
                                 }
                             });
@@ -302,10 +315,13 @@ $(function() {
         }};
         self.selectedQueue.subscribe(function (q) {
             if (q != undefined || q != null) {
-          
+                console.log("select")
+                console.log(q.id)
+                
                 self.getQueue(q.id);
                 self.queueName(q.name)
                 self.queuesIndex(q.index)
+                console.log(q,items)
  
                 
             }
@@ -518,12 +534,13 @@ $(function() {
 
         self.queueAddItem = function (data) {
             try {
-                self.check_add_remove("add", data.item);
-
+                self.checkAddRemove("add", data.item);
+                console.log(self.itemCount)
                 var jsonData = JSON.stringify({
                     index: self.itemCount - 1,
                     item: data.item,
                 });
+                console.log(jsonData)
 
                 $.ajax({
                     url: "plugin/speroplugin/queueAddItem",
@@ -570,7 +587,26 @@ $(function() {
            
             const newName = e.target.value??'';
             console.log(newName)
+            console.log(self.currentQueue())
+            console.log("currentQueue")
+            console.log(self.selectedQueue())
+            console.log(self.currentQueue())
+            self.currentId="sa"
+            console.log("currentqueee")
+            if (self.selectedQueue()==undefined){
+                
+                self.currentId=self.currentQueue().id
+                console.log(self.currentId)
 
+
+            }
+            else{
+
+                self.currentId =self.selectedQueue().id  
+                console.log(self.currentId)
+            }
+
+                
          
             try {
                 $.ajax({
@@ -581,16 +617,17 @@ $(function() {
                     headers: {
                         "X-Api-Key": UI_API_KEY,
                     },
+
                     data: JSON.stringify({
                         queueName: newName,
-                        id: self.selectedQueue().id,
+                        id:  self.currentId,
                         index:self.queuesIndex()
 
                     }),
                     success() {
                         
                         self.queueName(newName)
-                   
+                    
 
                         console.log("----------reload----------")
                         self.reload_plugin();
@@ -604,6 +641,8 @@ $(function() {
     
         self.reload_items = function (items = [], reload = false) {
             try {
+                console.log("reload")
+                console.log(self.items)
                 self.itemCount = items.length;
                 var templist = [];
 
@@ -666,6 +705,7 @@ $(function() {
             try {
                 // self.queueState('IDLE');
                 // self.queueState=='IDLE';
+                self.reload_items()
                 $.ajax({
                     url: "/plugin/speroplugin/createQueue",
                     type: "GET",
@@ -685,7 +725,7 @@ $(function() {
                 console.log("create queue error => ", error);
             }
         };
-        self.check_add_remove = function (type, data) {
+        self.checkAddRemove = function (type, data) {
             try {
                 if (type == "add") {
                     var index = self.itemCount;
@@ -711,13 +751,13 @@ $(function() {
                     self.itemCount -= 1;
                 }
             } catch (error) {
-                console.log("check_add_remove => ", error);
+                console.log("checkAddRemove => ", error);
             }
         };
 
         self.queueRemoveItem = function (data) {
             try {
-                self.check_add_remove("remove", data);
+                self.checkAddRemove("remove", data);
                 $.ajax({
                     url: "plugin/speroplugin/queueRemoveItem?index=" + data,
                     type: "DELETE",
