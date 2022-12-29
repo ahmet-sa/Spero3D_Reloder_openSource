@@ -17,6 +17,7 @@ $(function() {
         self.bedPosition=ko.observable(0)
         self.motorState=ko.observable(0)
         self.isShieldConnected=ko.observable(0)
+        self.device=ko.observable(0)
         self.queueState=ko.observable("IDLE");
         self.queueName = ko.observable(0);
         self.queuesIndex=ko.observable(0);
@@ -133,6 +134,10 @@ $(function() {
                     // console.log('bedPosition',self.bedPosition());
                     // console.log('motorState',self.motorState());
                     console.log('isShieldConnected',self.isShieldConnected());
+                    console.log('device',self.device());
+
+                   
+
                     console.log('currentItems',self.currentItems());
                     console.log('queueName',self.queueName());
                     // console.log('queueState',self.queueState()); 
@@ -182,10 +187,23 @@ $(function() {
         };
 
 
+
+
+
+        self.onEventPrintDone =function(payload){
+            var as = {z: 90};
+            OctoPrint.printer.jog(as);
+
+
+            var as = {y: 130};
+            OctoPrint.printer.jog(as);
+
+        }
+
+
         self.front = function () {
             try {
          
-                console.log("eject");
         
 
           
@@ -281,28 +299,18 @@ $(function() {
                             console.log(self.queues())
 
                             ko.utils.arrayFirst(self.queues(), function (item) {
-                                console.log(item)
-                                console.log(item.id)
+                             
                                 var reload =
                                     self.queueState() == "IDLE"
-                                    console.log("sa")
-                                    console.log(item.id)
-                                    console.log(item.items)
+                                
                                 if (item.id == id) {
-                                    console.log("yes")
                                     self.queueId(item.id);
                                     self.queueName(item.name);
-                                    console.log(item)
-                                    console.log(item["items"])
-                                    console.log(item.items)
                                     self.reload_items(item.items)
-                                    console.log(item.items)
                                     var queue = self.reload_items(
                                         item.items,
                                         (reload = reload)
                                     );
-                                    console.log(queue)
-                                    console.log("Array get successfull!");
                                     
                                     return queue;
                                 }
@@ -310,18 +318,14 @@ $(function() {
                         },
                     });
                 } catch (error) {
-                    console.log("getQueue => ", error);
                 }
         }};
         self.selectedQueue.subscribe(function (q) {
             if (q != undefined || q != null) {
-                console.log("select")
-                console.log(q.id)
                 
                 self.getQueue(q.id);
                 self.queueName(q.name)
                 self.queuesIndex(q.index)
-                console.log(q,items)
  
                 
             }
@@ -329,7 +333,6 @@ $(function() {
 
         self.selectedPort.subscribe(function (r) {
             if (r != undefined || r != null) {
-                console.log(r)
                 self.portName(r)
                 self.sendPort(r)
                 data=self.selectedPort()
@@ -367,7 +370,6 @@ $(function() {
 
         self.sendPort = function (data) {
             try {
-                console.log(data)
                 json = JSON.stringify({ request: data });
                 $.ajax({
                     url: "plugin/speroplugin/sendPort",
@@ -386,7 +388,8 @@ $(function() {
 
         self.deviceControl = function (data) {
             try {
-                console.log(data)
+         
+
                 json = JSON.stringify({ request: data });
                 $.ajax({
                     url: "plugin/speroplugin/deviceControl",
@@ -535,12 +538,10 @@ $(function() {
         self.queueAddItem = function (data) {
             try {
                 self.checkAddRemove("add", data.item);
-                console.log(self.itemCount)
                 var jsonData = JSON.stringify({
                     index: self.itemCount - 1,
                     item: data.item,
                 });
-                console.log(jsonData)
 
                 $.ajax({
                     url: "plugin/speroplugin/queueAddItem",
@@ -586,24 +587,17 @@ $(function() {
 
            
             const newName = e.target.value??'';
-            console.log(newName)
-            console.log(self.currentQueue())
-            console.log("currentQueue")
-            console.log(self.selectedQueue())
-            console.log(self.currentQueue())
+    
             self.currentId="sa"
-            console.log("currentqueee")
             if (self.selectedQueue()==undefined){
                 
                 self.currentId=self.currentQueue().id
-                console.log(self.currentId)
 
 
             }
             else{
 
                 self.currentId =self.selectedQueue().id  
-                console.log(self.currentId)
             }
 
                 
@@ -641,8 +635,6 @@ $(function() {
     
         self.reload_items = function (items = [], reload = false) {
             try {
-                console.log("reload")
-                console.log(self.items)
                 self.itemCount = items.length;
                 var templist = [];
 

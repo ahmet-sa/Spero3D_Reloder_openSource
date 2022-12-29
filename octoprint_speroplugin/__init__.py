@@ -2,8 +2,6 @@
 from __future__ import absolute_import
 import asyncio
 from threading import Timer
-# from .SheildControl import SheildControl
-from flask.globals import request
 from octoprint.plugin.types import SettingsPlugin
 from octoprint.settings import settings
 from octoprint_speroplugin.PluginEnums import BedPosition, EjectState, ItemState, MotorState, QueueState
@@ -17,9 +15,9 @@ import os
 import flask
 import uuid
 import datetime
-
+import requests
 from flask import jsonify
-import json
+
 
 
 
@@ -29,8 +27,6 @@ from octoprint.server.util.flask import (
 
 import octoprint.plugin
 import asyncio
-
-
 
 
 
@@ -53,7 +49,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
     settingsParams = ["motorPin1","motorPin2","switchFront","switchBack","buttonForward","buttonBackword","buttonSequence","targetBedTemp","delaySeconds"]
     # sheildControl=None
 
-    requiredDatas = ["settings2","currentIndex","bedPosition",'motorState','isShieldConnected','queueState','currentQueue',
+    requiredDatas = ["settings2","currentIndex","bedPosition",'motorState','isShieldConnected','queueState','currentQueue',"device",
                     'itemState',    ]
 
 
@@ -87,13 +83,56 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         self.results=None
         self.selectedQueue=None
         self.queueName="idle"
+        self.device=None
 
 
 
 
     def on_startup(self, host, port):
+        
+        # OCTOPRINT_URL = "http://localhost:5000"  # Replace with your OctoPrint URL
+        # response = requests.get(
+        #     f"{OCTOPRINT_URL}/api/settings",
+        #     auth=("Spero", "spero123")
+        # )
 
+        # # Check the status code of the response
+        # if response.status_code == 200:
+        #     # If the request was successful, parse the JSON response
+        #     settings = response.json()
 
+        #     # The API key is in the "api" sub-dictionary
+        #     api_key = settings["api"]["key"]
+
+        #     print(f"API key: {api_key}")
+        # else:
+        #     print(f"Error getting settings: {response.text}")
+        
+        
+                
+        # OCTOPRINT_URL = "http://localhost:5000"  # Replace with your OctoPrint URL
+        # API_KEY = api_key
+
+        # headers = {
+        #     "X-Api-Key": API_KEY,
+        #     "Content-Type": "application/json",
+        # }
+        
+        
+        # command = "G1 X10 Y20"  # Replace with your G-code command
+
+        # response = requests.post(
+        #     f"{OCTOPRINT_URL}/api/printer/command",
+        #     headers=headers,
+        #     json={"command": command},
+        # )
+              
+        # if response.status_code == 204:
+        #     print("Command sent successfully")
+        # else:
+        #         print(f"Error sending command: {response.text}")  
+            
+      
         fileDir = os.path.join(self.ROOT_DIR,"queues.json")
         fileExist = os.path.exists(fileDir)
         if not fileExist:
@@ -108,7 +147,6 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
             open(fileDir, 'w+')    
             
 
-
       
      
 
@@ -121,21 +159,21 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
 
     def on_after_startup(self):
+        
+        
+        
+        self.device=self._settings.get(["device"])
+        self.messageToJs({'device':self.device})
  
         self.queues=self.dbQueue.all()
-        print(self.queues)
         
         search=Query()
         self.currentQueue=self.dbQueue.get(search.last=="last_queue")      
-        print("current queee")                   
-        print(self.currentQueue)
         
         if self.currentQueue!=None:
             self.currentItems=self.currentQueue["items"]
             self.queueName=self.currentQueue["name"]
-            print(self.queueName)
-            print(self.currentItems)
-            print("***********************************")
+
             self.messageToJs({'currentItems':self.currentItems})
             self.messageToJs({'queueName':self.queueName})    
             
@@ -169,11 +207,9 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         self.results=self.dbPorts.get(searchPort.findId=="find")     
                             
         if self.results!=None:
-            print(self.results["serialId"])
             self.serial.selectedPortId(self.results["serialId"])
         else:
             self.serial.portList()
-            print("not found")
 
 
 
@@ -232,6 +268,15 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
         if event == "PrintDone":
             self.ejectState=EjectState.WAIT_FOR_TEMP.value
+            # Execute the commands in the queue
+           
+      
+            
+            
+            if self.device=="Reloder":
+                print("reloder fonk başladı")
+            if self.device=="Reloder Pro":
+                print("reloder Pro fonksiyon başladı")
             self.itemState=ItemState.EJECTING.value
             self.tryEject()
 
@@ -257,7 +302,6 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         self.ejectState = EjectState.WAIT_FOR_TEMP.value
 
     def startEject(self):
-        print("start")
         self.serial.sendActions("eject")
         self.ejectState=EjectState.EJECTING.value
         self.waitingEject()
@@ -265,7 +309,6 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
 
     def waitingEject(self):
-        print(self.ejectState)
         if self.ejectState =="EJECTING_FINISHED":
             # self.controlEject=self.sheildControl.sequenceFinish
 
@@ -318,6 +361,9 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
 
     def startPrint(self, canceledIndex=None):
+        
+        
+        
         if self.queueState == "RUNNING"or self.queueState=="STARTED":
             queue = self.currentQueue["items"]
             self.print_file = None
@@ -348,23 +394,19 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
     def get_settings_defaults(self):
         return dict(
-            motorPin3=23,
-            motorPin1=23,
-            motorPin2=18,
-            switchFront=27,
-            switchBack=22,
-            buttonForward=2,
-            buttonBackword=6,
-            buttonSequence=3,
-            delaySeconds=10,
+            status=6,
             targetBedTemp=40,
-            error=False,
-        )
+            device="Reloder"
+            
+      )
+        
 
 
     def on_settings_save(self, data):
-        data.pop('error')
-        # Data içinden error'u sildir öyle gönder süpere
+        if data["device"]!=None:
+            self.device=data["device"]
+            
+        self.messageToJs({'device':self.device})
         return super().on_settings_save(data)
 
 
@@ -386,7 +428,6 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
     def saveToDataBase(self):
         data = flask.request.get_json()
         Exist = Query()
-        print(data)
         queueId = data["id"]
         name = data["queueName"]  if data["queueName"]  != "" or data["queueName"]  != None else "New Queue"
         items = self.currentQueue["items"] if self.currentQueue["items"] !=None else []
@@ -427,11 +468,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         # self._settings.set(["speroplugin_currentQueue"], json.dumps(self.currentQueue))
         # self._settings.save()
         
-        print(self.currentItems)
-        print("itemmmsss")
-        print(self.currentQueue)
-        print("queueue")
-        
+ 
         self.selectedQueue=self.currentQueue
         self.messageToJs({'queues':self.queues})
         self.messageToJs({'selectedQueue':self.selectedQueue})
@@ -510,8 +547,16 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
     @ restricted_access
     def deviceControl(self):
         
+        
+     
+        
+        
         data = flask.request.get_json()
-        print(data)
+      
+        
+        
+        
+        
         if (data["request"]):
             self.serial.sendActions(data["request"])
        
@@ -670,8 +715,9 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
             self.queueState = "STARTED"
             totalTime = flask.request.args.get("totalEstimatedTime", 0)
             self.totalEstimatedTime = totalTime
-            if len(self.currentQueue["items"]) > 0:
-                self.startPrint()
+            if self.currentQueue!=None:
+                if len(self.currentQueue["items"]) > 0:
+                    self.startPrint()
 
             res = jsonify(success=True)
             res.status_code = 200
@@ -735,7 +781,6 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         self.messageToJs({'currentQueue':self.currentQueue})
         self.messageToJs({'currentItems':self.currentItems})
         self.messageToJs({'queueName':self.queueName})
-        self.selectedQueue=self.currentQueue
 
 
         res = jsonify(success=True)
@@ -766,19 +811,20 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
     @ octoprint.plugin.BlueprintPlugin.route("/queueAddItem", methods=["POST"])
     @ restricted_access
     def queueAddItem(self):
-        queue = self.currentQueue["items"]
-        data = flask.request.get_json()
-        print(data)
-        queue.append(
-            dict(
-                index=data["index"],
-                name=data["item"]["name"],
-                path=data["item"]["path"],
-                sd=data["item"]["sd"],
-                state="Await",
-                timeLeft=data["item"]["timeLeft"]
+        if self.currentQueue!=None:
+            queue = self.currentQueue["items"]
+            data = flask.request.get_json()
+            print(data)
+            queue.append(
+                dict(
+                    index=data["index"],
+                    name=data["item"]["name"],
+                    path=data["item"]["path"],
+                    sd=data["item"]["sd"],
+                    state="Await",
+                    timeLeft=data["item"]["timeLeft"]
+                )
             )
-        )
         res = jsonify(success=True, data="")
         res.status_code = 200
         return res
@@ -830,11 +876,8 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
     @ restricted_access
     def getQueue(self):
         queueId = flask.request.args.get("id")
-        print(queueId)        
         search=Query()
         self.currentItems=self.dbQueue.get(search.id==queueId)                         
-        print("////////////////////////////////////////")
-        print(self.currentItems)
         self.messageToJs({'currentItems':self.currentItems})
         
         # print(self.queues["id"])
@@ -882,32 +925,22 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         if x:
             currentBedTemp = x[0]
             if self.ejectState == "WAIT_FOR_TEMP":
+            
                 self.checkBedTemp(currentBedTemp)
 
         return parsed_temperatures
 
     def checkBedTemp(self,currentBedTemp):
-
+        print(self.device)
         self.messageToJs({'temp':currentBedTemp,'targetBedTemp':self.settings2["targetBedTemp"]})
 
         if(currentBedTemp<=float(self.settings2["targetBedTemp"])):
             self.startEject() # state -> Ejecting,
 
 
-# from octoprint.events import Events
-# from octoprint.server import eventManager, app
 
 
-# def send_message(event, payload):
-#     app.logger.info("Sending message to terminal: 'Hello world!'")
-#     eventManager.fire(Events.PLUGIN_MONITOR_MESSAGE, {"message": "Hello world!"})
-
-# def register_custom_hooks():
-#     eventManager.subscribe(Events.PRINT_STARTED, send_message)
-
-
-
-
+  
 
 __plugin_name__ = "speroplugin Plugin"
 __plugin_pythoncompat__ = ">=3,<4"  # Only Python 3
@@ -920,7 +953,6 @@ def __plugin_load__():
     global __plugin_hooks__
     __plugin_hooks__ = {
         "octoprint.plugin.softwareupdate.check_config": __plugin_implementation__.get_update_information,
-        "octoprint.comm.protocol.temperatures.received": (__plugin_implementation__.sanitize_temperatures,1),
-
+        "octoprint.comm.protocol.temperatures.received": __plugin_implementation__.sanitize_temperatures,
 
     }
