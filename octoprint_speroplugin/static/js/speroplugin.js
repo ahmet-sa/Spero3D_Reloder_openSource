@@ -6,14 +6,14 @@
  */
 $(function() {
     function SperoViewModel(parameters) {
-        
+
 
         var self = this;
         self.selectedQueue = ko.observable();
-        self.selectedPort = ko.observable(); 
-        self.portName = ko.observable(0);                         
-        self.temp=ko.observable(0)                                    
-        self.currentIndex=ko.observable(0)                             
+        self.selectedPort = ko.observable();
+        self.portName = ko.observable(0);
+        self.temp=ko.observable(0)
+        self.currentIndex=ko.observable(0)
         self.bedPosition=ko.observable(0)
         self.motorState=ko.observable(0)
         self.isShieldConnected=ko.observable(0)
@@ -22,13 +22,13 @@ $(function() {
         self.queueName = ko.observable(0);
         self.queuesIndex=ko.observable(0);
         self.currentQueue=ko.observable(0);
-        self.ejectFail=ko.observable(0);  
+        self.ejectFail=ko.observable(0);
+        self.createQueueEnable=ko.observable(0);
         // self.currentQueueItems=ko.observableArray([]);
-        
+
         self.itemState=ko.observable();
         self.targetBedTemp=ko.observable(0);
-
-        
+        self.firstQueue=true;
 
 
         self.printerState = parameters[0];
@@ -37,24 +37,23 @@ $(function() {
         self.files = parameters[3];
         self.settings = parameters[4];
         self.temperature = parameters[5];
-   
+
         self.settings2 = ko.observable({});             //settings parametresi var diye setting2 diye adlandırdım gelen ayarları
         self.queues = ko.observableArray([]);
         self.ports= ko.observableArray([]);
         self.currentItems = ko.observableArray([]);
         self.queueId = ko.observable(null);
         self.itemInfo = ko.observable();               //sıcaklık verisini jinjaya gönderme
-        self.itemCount = 0;                            //item sayısı                                   
+        self.itemCount = 0;                            //item sayısı
         self.totalEstimatedTime = ko.observable(0);
-       
 
 
 
- 
+
+
         self.onBeforeBinding = function () {
             try {
-                
-           
+
                 self.reload_plugin();
                 self.fileDatas();
             } catch (error) {
@@ -62,11 +61,11 @@ $(function() {
 
             }
         };
+
         self.startQueue = function () {
             try {
-                console.log("start_queue")                           
                 self.fileDatas();
-          
+
                 $.ajax({
                     url:
                         "plugin/speroplugin/startQueue?totalEstimatedTime=" +
@@ -81,21 +80,21 @@ $(function() {
                       console.log("printStarted")
                     },
                 });
-                  
-           
-               
-               
+
+
+
+
             } catch (error) {
                 console.log("start_queue => ", error);
             }
         };
 
-        
+
 
 
         self.pointer = function (index) {             // tıkladıgım pointerın indexsini döndürür
             try {
-              
+
                 if (index > 0) {
                     $.ajax({
                         url: "plugin/speroplugin/pointer?index=" + index,
@@ -111,15 +110,15 @@ $(function() {
             }
         };
 
-        self.onDataUpdaterPluginMessage = function (plugin, data) { 
+        self.onDataUpdaterPluginMessage = function (plugin, data) {
 
             if (plugin == "speroplugin" && !_.isEmpty(data)) {
-                
+
                 try {
                    Object.entries(data).forEach((v)=>{
                         self[v[0]](v[1])
                     })
-                    // console.log('temp',self.temp());
+          
 
                     var message =
                         self.temp().toString() +
@@ -127,48 +126,41 @@ $(function() {
                         self.targetBedTemp().toString() +
                         " C";
                     self.itemInfo(message);
-                    console.log("ports",self.ports())
-                    // console.log(this.itemInfo())
-                    // console.log('targetBedTemp',self.targetBedTemp());
-                    // console.log('currentIndex',self.currentIndex());
-                    // console.log('bedPosition',self.bedPosition());
-                    // console.log('motorState',self.motorState());
-                    console.log('isShieldConnected',self.isShieldConnected());
-                    console.log('device',self.device());
 
-                   
 
-                    console.log('currentItems',self.currentItems());
-                    console.log('queueName',self.queueName());
-                    // console.log('queueState',self.queueState()); 
-              
-                    console.log('queues',self.queues())
-                    console.log('currentQueue',self.currentQueue());
-                    // console.log('settings',self.settings2())
+     
 
-                    console.log("currentItemsss")
-                    console.log(self.currentItems())
-                    
+
+                    if(self.firstQueue==true && self.currentQueue()!="0"){
+                    a=self.currentQueue()
+           
+                    self.firstQueue=false
+                    self.selectedQueue(a)
+                    }
+
+
+
+
+
                     if(self.queueState()=="IDLE"){
                         self.itemState("Await");
                         for(let i=0;i<self.currentItems().length;i++){
-                      
+
                             var item = self.currentItems()[i];
                             item().state(self.itemState());
-                      
 
-                    
+
+
                          }
                     }
 
 
-                
+
 
                     var item = self.currentItems()[self.currentIndex()];
                     item().state(self.itemState());
                     self.currentQueueItems(self.currentItems()["items"])
 
-                    // console.log('currentQueueItems',self.currentQueueItems());
 
                     if (self.queueState()=='IDLE'){
                         for (let i = 0; i < self.currentQueue().length; i++){
@@ -178,56 +170,20 @@ $(function() {
                         }
                     }
 
-                        
+
               }catch (error) {
-                console.log("onDataUpdaterPluginMessage => ", error);
             }
             }
-        
+
         };
 
 
 
 
-
-        self.onEventPrintDone =function(payload){
-            var as = {z: 90};
-            OctoPrint.printer.jog(as);
-
-
-            var as = {y: 130};
-            OctoPrint.printer.jog(as);
-
-        }
-
-
-        self.front = function () {
-            try {
-         
-        
-
-          
-                    $.ajax({
-                        url: "plugin/speroplugin/front",
-                        method: "GET",
-                        dataType: "json",
-                        headers: {
-                            "X-Api-Key": UI_API_KEY,
-                        },
-                        data: {},
-                        success: function () {},
-                    });
-                    
-                
-            } catch (error) {
-                console.log("pause resume queue error => ", error);
-            }
-        };
 
 
         self.pauseStopQueue = function (index) {
             try {
-                console.log("pause ye basıldı");
 
                     $.ajax({
                         url: "plugin/speroplugin/pauseStopQueue",
@@ -239,8 +195,8 @@ $(function() {
                         data: {},
                         success: function () {},
                     });
-                    
-                
+
+
             } catch (error) {
                 console.log("pause resume queue error => ", error);
             }
@@ -248,10 +204,6 @@ $(function() {
 
         self.cancelQueue = function () {
             try {
-
-                console.log("Cansel la basıldı")
-                
-
                 $.ajax({
                     url: "plugin/speroplugin/cancelQueue",
                     method: "GET",
@@ -267,7 +219,6 @@ $(function() {
         };
         self.pauseResumeQueue = function () {
             try {
-                console.log("play press");
                 $.ajax({
                     url: "plugin/speroplugin/pauseResumeQueue",
                     method: "GET",
@@ -284,25 +235,25 @@ $(function() {
     };
 
         self.getQueue = function (id) {              // queue itemleri atıyor
+            
+
             if(self.queueState()=='IDLE'){
                  try {
-       
-                    console.log("Our queue id is =>=> ", id);
                     $.ajax({
                         url: "plugin/speroplugin/getQueue?id=" + id,
                         method: "GET",
                         dataType: "json",
                         headers: {
                             "X-Api-Key": UI_API_KEY,
+                            
                         },
                         success() {
-                            console.log(self.queues())
-
+           
                             ko.utils.arrayFirst(self.queues(), function (item) {
-                             
+
                                 var reload =
                                     self.queueState() == "IDLE"
-                                
+
                                 if (item.id == id) {
                                     self.queueId(item.id);
                                     self.queueName(item.name);
@@ -311,7 +262,7 @@ $(function() {
                                         item.items,
                                         (reload = reload)
                                     );
-                                    
+
                                     return queue;
                                 }
                             });
@@ -320,14 +271,30 @@ $(function() {
                 } catch (error) {
                 }
         }};
+
+      
         self.selectedQueue.subscribe(function (q) {
             if (q != undefined || q != null) {
                 
-                self.getQueue(q.id);
+  
                 self.queueName(q.name)
                 self.queuesIndex(q.index)
- 
                 
+
+
+                if (q.items==[] || q.items==undefined) {
+                  self.queueName(q.name)
+
+                }
+                else{
+                    self.currentQueue(q)
+                    self.getQueue(q.id)
+                    self.queueName(q.name)
+                    self.queuesIndex(q.index)
+
+                }
+
+
             }
         });
 
@@ -348,25 +315,13 @@ $(function() {
                     data: json,
                 });
 
-                
-                
-    
+
+
+
             }
         });
 
-        // self.selectedPort = function (data) {
-        //     try {
-        //         console.log(data)
-        //         json = JSON.stringify({ request: data });
-        //         
-        //     } catch (error) {
-        //         console.log("deviceControl => ", error);
-        //     }
-        // };
-
-
- 
-
+  
 
         self.sendPort = function (data) {
             try {
@@ -388,7 +343,7 @@ $(function() {
 
         self.deviceControl = function (data) {
             try {
-         
+
 
                 json = JSON.stringify({ request: data });
                 $.ajax({
@@ -434,15 +389,7 @@ $(function() {
             try {
                 var have_print = false;
 
-                self.currentItems().forEach((element) => {
-                    if (
-                        element().state() == "Printing" ||
-                        element().state() == "Paused"
-                    ) {
-                        have_print = true;
-                        return have_print;
-                    }
-                });
+    
                 return have_print;
             } catch (error) {
                 console.log("check_printing => ", error);
@@ -452,7 +399,7 @@ $(function() {
 
         self.printerState.printTime.subscribe(function (data) {
             try {
-              
+
                    {
                         if (data != null || data != undefined) {
                             self.currentItems()
@@ -468,17 +415,17 @@ $(function() {
                             self.sendTimeData();
                         }
                     }
-                
+
             } catch (error) {
                 console.log("print time subscription => ", error);
             }
         });
 
-      
+
         self.printerState.stateString.subscribe(function (state) {
-            try {   
-            
-            
+            try {
+
+
                 if (self.queueState != "IDLE") {
                     var item = self.currentItems()[self.currentIndex()];
                     if (
@@ -488,7 +435,7 @@ $(function() {
                     ) {
                         switch (state) {
                             case "Printing":
-                                
+
                                 item().color("#F9F9F9");
                                 item().state(state);
                                 if (self.queueState() != "PAUSED")
@@ -504,7 +451,7 @@ $(function() {
                                 item().state(state);
                                 self.queueState("PAUSED");
                                 break;
-                                
+
                             case "Eject Faild":
                                 item().color("red");
                                 item().state(state);
@@ -528,8 +475,8 @@ $(function() {
                         }
                     }
                 }
-                
-                
+
+
             } catch (error) {
                 console.log("printerState => ", error);
             }
@@ -566,8 +513,8 @@ $(function() {
                 var sd = "true";
                 if (data.origin == "local") {
                     sd = "false";
-                } 
-                
+                }
+
                 var item = {
                     name: data.name,
                     path: data.path,
@@ -578,29 +525,38 @@ $(function() {
                 self.queueAddItem({
                     item,
                 });
-                
+
             } catch (e) {
                 console.log("File add item error => ", e);
             }
         };
         self.saveToDataBase = function (val,e) {
 
-           
+
             const newName = e.target.value??'';
-    
+
             self.currentId="sa"
+            if (self.queuesIndex()==undefined){
+                self.queuesIndex(self.queues().length)
+
+
+            }else(
+
+                self.queuesIndex(((self.queues().length)-1))
+
+
+            )
+            
             if (self.selectedQueue()==undefined){
-                
+
                 self.currentId=self.currentQueue().id
 
 
             }
             else{
 
-                self.currentId =self.selectedQueue().id  
+                self.currentId =self.selectedQueue().id
             }
-
-                
          
             try {
                 $.ajax({
@@ -619,11 +575,10 @@ $(function() {
 
                     }),
                     success() {
-                        
-                        self.queueName(newName)
-                    
 
-                        console.log("----------reload----------")
+                        self.queueName(newName)
+
+
                         self.reload_plugin();
                     },
                 });
@@ -632,10 +587,17 @@ $(function() {
             }
         };
 
-    
+
         self.reload_items = function (items = [], reload = false) {
+
             try {
-                self.itemCount = items.length;
+                if (items!=undefined){
+
+                    
+                    self.itemCount = items.length;
+    
+                }
+              
                 var templist = [];
 
                 items.forEach((e) => {
@@ -676,7 +638,7 @@ $(function() {
 
         self.reload_plugin = function () {
 
-    
+
             try {
                 $.ajax({
                     url: "plugin/speroplugin/sendStartDatas",
@@ -686,18 +648,16 @@ $(function() {
                         "X-Api-Key": UI_API_KEY,
                     },
                     success: function (item) {
-                       
+
                     },
                 });
             } catch (error) {
                 console.log("reload_plugin => ", error);
             }
-        };    
+        };
         self.createQueue = function () {
             try {
-                // self.queueState('IDLE');
-                // self.queueState=='IDLE';
-                self.reload_items()
+             
                 $.ajax({
                     url: "/plugin/speroplugin/createQueue",
                     type: "GET",
@@ -705,9 +665,11 @@ $(function() {
                     headers: {
                         "X-Api-Key": UI_API_KEY,
                     },
-                    success: function (r) {
-                    
-                        self.reload_plugin();
+                    success: function (r) {  
+                    self.selectedQueue((self.currentItems()))
+                    self.currentItems(self.currentQueue().items)
+                    self.itemCount=0
+                    self.reload_plugin();
                     },
                     error: function (e) {
                         console.log(e);
@@ -764,7 +726,7 @@ $(function() {
         };
         self.fileDatas = function (index = null) {
             try {
-             
+
                 $.ajax({
                     url: "/api/files?recursive=true",
                     type: "GET",
@@ -858,7 +820,7 @@ $(function() {
                 console.log("sendTimeData => ", error);
             }
         };
-    
+
         self.totalPrintTime = function () {
             try {
                 var totalTime = 0;
@@ -951,16 +913,21 @@ $(function() {
         };
 
         self.sayhello = function () {
-         
-            console.log("Hello!");
-            
+
+            if(self.selectedQueue()==undefined){
+                self.createQueueEnable("idle")
+                }
+            else{
+                self.createQueueEnable("false")
+
+            }    
+
 
         };
-      
-        
+
+
         self.queueItemDuplicate = function (data) {
             try {
-                console.log("asjhkdlbsad")
                 $.ajax({
                     url: "plugin/speroplugin/queueItemDuplicate?index=" + data,
                     type: "GET",
@@ -991,12 +958,13 @@ $(function() {
                     data: {},
                     success() {
 
+
                         self.queueName(null);
                         self.queueId(null);
                         self.currentItems(null);
 
                         self.reload_plugin();
-                        
+
                     },
                 });
             } catch (error) {
@@ -1025,7 +993,7 @@ $(function() {
                     console.log("recursiveGetFiles error => ", error);
                 }
             };
-    
+
         self.toHHMMSS = function (sec_num) {
             try {
                 if (!isNaN(sec_num) && sec_num > 0 ) {

@@ -188,7 +188,8 @@
           style: $root.queueState() == 'IDLE' ? {padding:'5px'} : {}">
           <div class="savebox">
               <input class="text_queue" data-bind="textInput: $root.selectedQueue()?$root.selectedQueue().name:'', event:{ blur :$root.saveToDataBase }">
-              <span  data-bind="click: function() {  $root.createQueue()}" title="Create new queue.">
+              
+              <span  data-bind="click: function() {  $root.createQueue()},visible: $root.createQueueEnable() == 'idle'", title="Create new queue.", >
                     <svg width="58" height="58" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <g filter="url(#filter0_d_0_1)">
                       <rect x="4" width="50" height="50" rx="5" fill="#F9F9F9"/>
@@ -219,7 +220,7 @@
               
                 </select></center>
               </div>
-              <span class="delete_queue" data-bind="visible: queueState() == 'IDLE' , click: function() {  $root.deleteFromDatabase()}"
+              <span class="delete_queue" data-bind="visible: queueState() == 'IDLE' , click: function() {  $root.deleteFromDatabase()},visible: $root.createQueueEnable() != 'idle'"
                 title="Delete current queue.">
 
                     <svg width="56" height="58" viewBox="0 0 56 58" fill="none" xmlns="http://www.w3.org/2000/svg">
