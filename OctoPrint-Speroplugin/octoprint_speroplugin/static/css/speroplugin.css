@@ -1,0 +1,488 @@
+#tab_plugin_speroplugin .main-model{
+  width: 100%;
+}
+
+#tab_plugin_speroplugin .main-model .state-container{
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  
+  border:1px;
+  border-color: #3CAFEA;
+  border-width: 2px;
+  width: 100%;
+  border-style: solid;
+  overflow: hidden ;
+}
+#tab_plugin_speroplugin  .state-container .spero-logo{
+ width:100%;
+ height:4rem;
+ background-color: #3CAFEA;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+}
+#tab_plugin_speroplugin  .state-container .state-section{
+
+  display: flex;
+  flex: 1;
+  padding: 24px;
+  background-color: #F5F5F5;
+
+
+ }
+ #tab_plugin_speroplugin  .state-container .state-section .half{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+  
+
+
+
+
+ #tab_plugin_speroplugin .items_space {
+
+  color: #5B5B5B;
+  font-family: 'Arial';
+  font-style: normal;
+  padding-left:7px ;
+  font-size: 13px;
+
+
+  
+ }
+
+   
+ #tab_plugin_speroplugin .items_space2 {
+
+  color: #5B5B5B;
+  font-family: 'Arial';
+  font-style: normal;
+  padding-left:7px ;
+  font-size: 13px;
+  font-weight: bold;
+
+
+  
+ }
+
+
+
+ 
+
+ 
+
+ #tab_plugin_speroplugin .buttons_item {
+  margin: auto;
+  color: #777777;
+  border-style: solid;
+  border-radius: 7px;
+  min-width: 120px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  border-width: 0.1px;
+  border-color: #a59090;
+}  
+  
+ 
+ #tab_plugin_speroplugin .buttons_item:hover{
+  background-color:#3CAFEA;
+  color: white;
+ }
+ #tab_plugin_speroplugin .buttons_item:active{
+  opacity:0.5;
+ }
+ #tab_plugin_speroplugin .buttons_item svg {
+  height: 16px;
+  width: 16px;
+  padding: 4px 12px;
+ }
+
+ #tab_plugin_speroplugin .buttons_item span {
+  font-weight: 600;
+ }
+
+ #tab_plugin_speroplugin .inlineText {
+
+  padding-top: 2px;
+
+  padding-left: 10px;
+  font-family: 'Arial';
+  font-style: normal;
+  font-weight:bold;
+  font-size: 17px;
+  line-height: 18px;
+  color: #5B5B5B;
+
+
+}
+
+#tab_plugin_speroplugin .buttons-name {
+  font-size: 10px;
+
+
+}
+
+
+
+
+
+#tab_plugin_speroplugin .main-model .queue-container{
+  margin-top: 15px;
+  border-radius: 20px;
+
+  border-color: #3CAFEA;
+  border-width: 2px;
+  border-style: solid;
+  overflow: hidden;
+  height: 450px;
+  width: 100%;
+  background-color: #F9F9F9;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  
+ 
+}
+
+ #tab_plugin_speroplugin  .queue-container .queue-items{
+
+  color: #777777;
+  margin-left: 25px;
+  display: flex;
+  flex-direction: row;
+  margin-top: 11px;
+  margin-bottom: 15px;
+
+} 
+
+#tab_plugin_speroplugin .details{
+  
+  height: 10px;
+  margin-top: 10px;
+  margin-right: 95px;
+
+}
+
+
+ 
+
+
+ #tab_plugin_speroplugin  .queue-container .queue-items svg{
+  height: 36px;
+  width: 30px;
+  margin-top: 0px;
+  cursor: pointer;
+  margin-right: 8px;
+
+ }
+   #tab_plugin_speroplugin  .queue-container .pause_and_resume{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+ }
+
+
+ 
+
+
+
+
+
+
+ 
+
+ #tab_plugin_speroplugin  .queue-container .selectbox{
+  width: 50%;
+  padding-left:25px;
+  padding-right:25px;
+  background-color: #F9F9F9;
+  align-items: center;
+  justify-content: center;
+ }
+
+
+ #tab_plugin_speroplugin  .queue-container  svg{
+
+  height: 24px;
+  width: 24px;
+ }
+ #tab_plugin_speroplugin .queue_container {
+
+  color: #5B5B5B;
+
+  border-width: 1px;
+  margin-left: 23px;
+  margin-right: 17px;
+  margin-top: 7px;
+  padding-bottom: 10px;
+   
+}
+
+#tab_plugin_speroplugin .queue-row-container {
+  margin-left: 16px;
+  font-size: 13px;
+  display: flex;
+  flex: 1;
+}
+
+#tab_plugin_speroplugin .queue-inner-row-container  {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;
+  width: 50%;
+  flex-grow: 2;
+  margin-top: 10px;
+  
+
+}
+#tab_plugin_speroplugin .queue-inner-row-container svg {
+
+  margin-right: 1px;
+  height: 20px;
+  width: 20px;
+  
+
+}
+#tab_plugin_speroplugin .queue-inner-row-container div {
+
+  margin-right: 8px;
+  
+
+}
+#tab_plugin_speroplugin .circle_state {
+  
+  height: 12px;
+  width: 12px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  
+  
+
+}
+
+
+
+
+#tab_plugin_speroplugin .queue-inner-row-container .state_circle svg{
+
+  height: 12px;
+
+  width: 12px;
+}
+#tab_plugin_speroplugin .queue-inner-row-container .item_state {
+
+  border-radius: 6px;
+
+  background-color:#77777738;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+
+}
+#tab_plugin_speroplugin .queue-inner-row-container .list_svgs {
+  cursor: pointer;
+  margin-left: 437px;
+  position: absolute;
+
+}
+
+
+
+
+
+
+ #tab_plugin_speroplugin .queue-item-state {
+
+  background-color: #F5F5F5;
+  
+  margin-left: 240px;
+  padding-left: 24px;
+  padding-bottom: 8px;
+  padding-top: 0px;
+  padding-right: 28px;
+  border-radius: 11px;
+  font-family: Arial, Helvetica, sans-serif;
+  
+ }
+
+ #tab_plugin_speroplugin .queue_save_delete {
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  margin-left: 16px;
+  font-size: 13px;
+ }
+ #tab_plugin_speroplugin .savebox {
+  width: 94%;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  margin-left: 14px;
+ 
+ }
+ #tab_plugin_speroplugin .create_part {          
+  height: 41px;
+ }
+
+ #tab_plugin_speroplugin .create_part  svg{
+  position: absolute;
+  height: 36px;
+  width: 30px;
+  margin-top: 11px;
+  cursor: pointer;
+  margin-left: -37px;
+ }
+
+
+ #tab_plugin_speroplugin  .queue_header {
+  border-bottom: 1px solid grey;
+  margin-top: 10px;
+}
+
+#tab_plugin_speroplugin  .text_queue {
+  width: 175px;
+  height: 23px;
+  border-radius: 7px;
+  border-color: #ccc;
+  margin-top: 13px;
+}
+
+
+#tab_plugin_speroplugin  .selected {
+  width: 220px;
+  background-color: #fff;
+  border: 2px solid #ccc;
+  margin-top: 12px;
+}
+
+
+#tab_plugin_speroplugin  .button_test {
+  width: 127px;
+  height: 20px;
+  background-color: rgb(240, 25, 25);
+  border: 2px solid rgb(61, 32, 190);
+  margin-top: 12px;
+}
+
+
+#settings_plugin_speroplugin .main-model {
+  width: 100%;
+  background-color:#3CAFEA
+}
+
+#settings_plugin_speroplugin .form-horizontal {
+  
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  
+  border:1px;
+  border-color: #3CAFEA;
+  border-width: 2px;
+  width: 99%;
+  border-style: solid;
+  overflow: hidden ;
+  font-family: 'Arial';
+  font-style: normal;
+}
+
+#settings_plugin_speroplugin .form-title {
+    
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding-left: 28px;
+  
+  margin-bottom: 10px;
+  background-color:#3CAFEA;
+  border:1px;
+  border-color: #3CAFEA;
+  border-width: 2px;
+  border-style: solid;
+  overflow: hidden ;
+  color: white;
+  font-family: 'Arial';
+  font-style: normal;
+  font-weight:bold;
+}
+
+
+#settings_plugin_speroplugin .form-horizontal .input-control.labels {
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 20px;
+}
+
+
+
+
+#settings_plugin_speroplugin .check_button {
+font-size: 14px;
+font-weight: normal;
+line-height: 20px;
+border-color: #3CAFEA;
+color: #3CAFEA;
+}
+
+
+#settings_plugin_speroplugin .warningText {
+  font-size: 15px;
+  font-weight: 100;
+  line-height: 136px;
+  border-color: #3CAFEA;
+  color: #0a0202;
+  }
+  
+  
+  
+  
+  
+  
+
+
+
+
+
+
+   
+
+
+
+ 
+ 
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
