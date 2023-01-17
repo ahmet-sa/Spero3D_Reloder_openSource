@@ -458,9 +458,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
                     'last':"last_queue",
                 })
 
-        # self._settings.set(["speroplugin_currentQueue"], json.dumps(self.currentQueue))
-        # self._settings.save()
-        
+
  
         
         self.messageToJs({'queues':self.queues})
@@ -552,16 +550,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         return res
 
 
-    # @ octoprint.plugin.BlueprintPlugin.route("/sendPort", methods=["POST"])
-    # @ restricted_access
-    # def sendPort(self):
 
-    #     data = flask.request.get_json()
-
-
-    #     res = jsonify(success=True)
-    #     res.status_code = 200
-    #     return res
 
 
 
@@ -591,15 +580,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         return res
 
 
-    @ octoprint.plugin.BlueprintPlugin.route("/sayhello",)
-    @ restricted_access
-
-    def sayhello(self):
-
-        res = jsonify(success=True)
-        res.status_code = 200
-        return res
-
+ 
     octoprint.plugin.BlueprintPlugin.route("/queueItemUp", methods=["GET"])
     @ restricted_access
     def queueItemUp(self):
@@ -703,7 +684,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
     @ octoprint.plugin.BlueprintPlugin.route("/startQueue", methods=["GET"])
     @ restricted_access
     def startQueue(self):
-        # if self.sheildControl.switch2Pres==True:
+            print("start")
             self.setSettings()
             self.queueState = "STARTED"
             totalTime = flask.request.args.get("totalEstimatedTime", 0)
@@ -756,19 +737,7 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
 
         return message
 
-    # @ octoprint.plugin.BlueprintPlugin.route("/get_datas", methods=["GET"])
-    # @ restricted_access
-    # def get_datas(self):
 
-    #     self.queues.append(self.currentQueue)
-
-    #     self.currentQueueItem = None
-    #     self.currentTime = 0
-    #     self.totalEstimatedTime = 0
-
-    #     res = jsonify(success=True)
-    #     res.status_code = 200
-    #     return res
     @ octoprint.plugin.BlueprintPlugin.route("/createQueue", methods=["GET"])
     @ restricted_access
     def createQueue(self):

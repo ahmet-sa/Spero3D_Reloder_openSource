@@ -40,7 +40,7 @@
      
           <div   >
             <center><select class="selected" id="queues" data-bind="options: $root.ports,optionsText: 'device',  value: $root.selectedPort, 
-            optionsCaption:'Select port', event:{ blur :$root.sayhello() }" style="width:100%;">
+            optionsCaption:'Select port', event:{ blur :$root.checkCreateQueueEnable() }" style="width:100%;">
           
             </select></center>
           </div>
@@ -216,7 +216,7 @@
           
               <div   >
                 <center><select class="selected" id="queues" data-bind="options: $root.queues, optionsText: 'name', value: $root.selectedQueue, 
-                optionsCaption:'Select Queue', enable: $root.queueState() == 'IDLE',event:{ blur :$root.sayhello() }" style="width:100%;">
+                optionsCaption:'Select Queue', enable: $root.queueState() == 'IDLE',event:{ blur :$root.checkCreateQueueEnable() }" style="width:100%;">
               
                 </select></center>
               </div>

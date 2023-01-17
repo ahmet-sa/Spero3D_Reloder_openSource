@@ -24,7 +24,6 @@ $(function() {
         self.currentQueue=ko.observable(0);
         self.ejectFail=ko.observable(0);
         self.createQueueEnable=ko.observable(0);
-        // self.currentQueueItems=ko.observableArray([]);
 
         self.itemState=ko.observable();
         self.targetBedTemp=ko.observable(0);
@@ -54,7 +53,7 @@ $(function() {
         self.onBeforeBinding = function () {
             try {
 
-                self.reload_plugin();
+                self.reloadPlugin();
                 self.fileDatas();
             } catch (error) {
                 console.log("onBeforeBinding => ", error);
@@ -132,10 +131,8 @@ $(function() {
 
 
                     if(self.firstQueue==true && self.currentQueue()!="0"){
-                    a=self.currentQueue()
-           
                     self.firstQueue=false
-                    self.selectedQueue(a)
+                    self.selectedQueue(self.currentQueue())
                     }
 
 
@@ -219,7 +216,7 @@ $(function() {
         };
         self.pauseResumeQueue = function () {
             try {
-                $.ajax({
+                 $.ajax({
                     url: "plugin/speroplugin/pauseResumeQueue",
                     method: "GET",
                     dataType: "json",
@@ -257,8 +254,8 @@ $(function() {
                                 if (item.id == id) {
                                     self.queueId(item.id);
                                     self.queueName(item.name);
-                                    self.reload_items(item.items)
-                                    var queue = self.reload_items(
+                                    self.reloadItems(item.items)
+                                    var queue = self.reloadItems(
                                         item.items,
                                         (reload = reload)
                                     );
@@ -579,7 +576,7 @@ $(function() {
                         self.queueName(newName)
 
 
-                        self.reload_plugin();
+                        self.reloadPlugin();
                     },
                 });
             } catch (error) {
@@ -588,7 +585,7 @@ $(function() {
         };
 
 
-        self.reload_items = function (items = [], reload = false) {
+        self.reloadItems = function (items = [], reload = false) {
 
             try {
                 if (items!=undefined){
@@ -632,11 +629,11 @@ $(function() {
                 self.currentItems(templist);
                 return templist;
             } catch (error) {
-                console.log("reload_items => ", error);
+                console.log("reloadItems => ", error);
             }
         };
 
-        self.reload_plugin = function () {
+        self.reloadPlugin = function () {
 
 
             try {
@@ -652,7 +649,7 @@ $(function() {
                     },
                 });
             } catch (error) {
-                console.log("reload_plugin => ", error);
+                console.log("reloadPlugin => ", error);
             }
         };
         self.createQueue = function () {
@@ -669,7 +666,7 @@ $(function() {
                     self.selectedQueue((self.currentItems()))
                     self.currentItems(self.currentQueue().items)
                     self.itemCount=0
-                    self.reload_plugin();
+                    self.reloadPlugin();
                     },
                     error: function (e) {
                         console.log(e);
@@ -860,7 +857,7 @@ $(function() {
         self.queueItemDown = function (index) {
             try {
                 if (index < self.currentItems().length - 1) {
-                    self.row_change_items("down", index);
+                    self.rowChangeItems("down", index);
 
                     $.ajax({
                         url: "plugin/speroplugin/queueItemDown?index=" + index,
@@ -875,7 +872,7 @@ $(function() {
                 console.log("queueItemDown error => ", error);
             }
         };
-        self.row_change_items = function (type, index) {
+        self.rowChangeItems = function (type, index) {
             try {
                 var newIndex;
 
@@ -897,7 +894,7 @@ $(function() {
         self.queueItemUp = function (index) {
             try {
                 if (index > 0) {
-                    self.row_change_items("up", index);
+                    self.rowChangeItems("up", index);
                     $.ajax({
                         url: "plugin/speroplugin/queueItemUp?index=" + index,
                         type: "GET",
@@ -912,8 +909,8 @@ $(function() {
             }
         };
 
-        self.sayhello = function () {
-
+        self.checkCreateQueueEnable = function () {
+            console.log("hello")
             if(self.selectedQueue()==undefined){
                 self.createQueueEnable("idle")
                 }
@@ -936,7 +933,7 @@ $(function() {
                         "X-Api-Key": UI_API_KEY,
                     },
                     success: function () {
-                        self.reload_plugin();
+                        self.reloadPlugin();
                     },
                 });
             } catch (error) {
@@ -963,7 +960,7 @@ $(function() {
                         self.queueId(null);
                         self.currentItems(null);
 
-                        self.reload_plugin();
+                        self.reloadPlugin();
 
                     },
                 });
