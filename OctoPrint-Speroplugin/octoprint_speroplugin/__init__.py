@@ -568,13 +568,16 @@ class Speroplugin(octoprint.plugin.StartupPlugin,
         Exist = Query()
         result = self.dbQueue.get(Exist.id==queueId)
         if result!=None:
-            self.queues.pop(result['index'])
-            self.dbQueue.remove(Exist.id == queueId)
+            self.queues = list(filter(lambda x: x['id'] != queueId, self.queues))
 
-        self.queuesIndex=len(self.queues)-1
-        
-        
-        
+            self.dbQueue.remove(Exist.id == queueId)
+        if self.queues==0:
+            self.queuesIndex=0
+        else :        
+         self.queuesIndex=len(self.queues)
+         
+         
+        self.messageToJs({'queues':self.queues})
         res = jsonify(success=True)
         res.status_code = 200
         return res

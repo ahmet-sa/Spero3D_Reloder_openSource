@@ -129,7 +129,6 @@ $(function() {
 
      
 
-
                     if(self.firstQueue==true && self.currentQueue()!="0"){
                     self.firstQueue=false
                     self.selectedQueue(self.currentQueue())
@@ -276,6 +275,8 @@ $(function() {
   
                 self.queueName(q.name)
                 self.queuesIndex(q.index)
+                console.log(q.id)
+                self.queueId(q.id)
                 
 
 
@@ -942,7 +943,8 @@ $(function() {
         };
         self.deleteFromDatabase = function () {
             try {
-                if (self.queueId() != undefined || self.queueId() != null);
+               
+                console.log(self.queueId())
                 $.ajax({
                     url:
                         "plugin/speroplugin/deleteFromDatabase?id=" +
@@ -955,7 +957,7 @@ $(function() {
                     data: {},
                     success() {
 
-
+                        console.log(self.queues())
                         self.queueName(null);
                         self.queueId(null);
                         self.currentItems(null);
